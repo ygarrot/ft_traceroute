@@ -1,0 +1,16 @@
+◦getpid
+◦getuid
+◦getaddrinfo
+◦gettimeofday
+◦inet_ntoa
+◦inet_pton
+◦exit
+◦select
+◦setsockopt
+◦recvfrom
+◦sendto
+◦htons
+◦ntohs
+◦bind
+◦socket
+◦les fonctions de la famille printf

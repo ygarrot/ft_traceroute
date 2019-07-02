@@ -6,18 +6,18 @@
 #    By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/11 13:13:35 by ygarrot           #+#    #+#              #
-#    Updated: 2019/03/17 11:49:37 by ygarrot          ###   ########.fr        #
+#    Updated: 2019/07/02 16:43:12 by ygarrot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .PHONY: $(NAME) all clean fclean re
 
-NAME = ft_ping
+NAME = ft_traceroute
 
 FLAGS = -Wall -Werror -Wextra
 FLAGS += -g3
 FLAGS += -Wunused
-# FLAGS += -fsanitize=address,undefined
+FLAGS += -fsanitize=address,undefined
 SRC_DIR = src
 
 INCLUDE =  includes/
@@ -48,12 +48,12 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c includes/$(NAME).h
-	@gcc $(FLAGS) -o $@ -c $<  -I $(INCLUDE)
+	@clang $(FLAGS) -o $@ -c $<  -I $(INCLUDE)
 
 
 $(NAME): obj_dir $(OBJS)
 	@make -C libft
-	@gcc $(FLAGS) -o $(NAME) $(OBJS)  -I $(INCLUDE) -L libft -l ft
+	@clang $(FLAGS) -o $(NAME) $(OBJS)  -I $(INCLUDE) -L libft -l ft
 	@echo $(NAME) is compiled
 
 obj_dir:

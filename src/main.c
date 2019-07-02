@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 11:11:27 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/01 18:21:47 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/02 15:16:39 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,18 @@ void	ft_ping(t_ping *ping)
 
 int		ping_loop(t_ping *ping)
 {
-	struct timeval tv_out;
+	int t = 1;
 
-	tv_out.tv_sec = ping->tstat.timeout;
-	tv_out.tv_usec = 0;
-	if (setsockopt(ping->socket, SOL_IP, IP_TTL,
-				&ping->tstat.ttl, sizeof(int)) != 0)
+	if (setsockopt(ping->socket, IPPROTO_IP, IP_HDRINCL, 
+				&t, sizeof(int)) != 0)
 	{
 		ft_printf("\nSetting socket options  TTL failed!\n");
 		return (1);
 	}
-	setsockopt(ping->socket, SOL_SOCKET, SO_RCVTIMEO,
-			(const char*)&tv_out, sizeof(tv_out));
 	gettimeofday(&ping->tstat.start, 0);
 	while (1)
 	{
+		ft_printf("test");
 		ft_ping(ping);
 	}
 	return (1);

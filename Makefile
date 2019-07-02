@@ -5,95 +5,70 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2018/04/11 12:06:15 by ygarrot           #+#    #+#              #
-#    Updated: 2019/06/25 13:56:39 by ygarrot          ###   ########.fr        #
+#    Created: 2018/04/11 13:13:35 by ygarrot           #+#    #+#              #
+#    Updated: 2019/03/17 11:49:37 by ygarrot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all $(NAME) clean fclean re
-.SUFFIXES:
+.PHONY: $(NAME) all clean fclean re
 
-NAME = scop
+NAME = ft_ping
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-CFLAGS += -g3
-CFLAGS += -fsanitize=address,undefined
+FLAGS = -Wall -Werror -Wextra
+FLAGS += -g3
+FLAGS += -Wunused
+# FLAGS += -fsanitize=address,undefined
+SRC_DIR = src
 
-FRAMEWORK += -framework OpenGL \
--framework CoreVideo \
--framework IOKit \
--framework Cocoa \
--framework Carbon
+INCLUDE =  includes/
 
+OBJ_DIR = obj
 
-SRCDIR = src
-OBJDIR = obj
-INCDIR =  \
-		  Users/ygarrot/.brew/Cellar/glew/2.1.0/include/GL \
-		  Users/ygarrot/.brew/Cellar/glfw/3.3/include \
-		  includes \
-		  libft/includes
+SRC =\
+	 ping_struct.c\
+	 setopt.c\
+	 setopt2.c\
+	 print.c\
+	 packet.c\
+	 checksum.c\
+	 ip_version.c\
+	 main.c\
+	 ping.c\
+	 set_socket.c\
+	 time.c
 
-SRC = \
-	  list/tlist_functions.c\
-	  list/vertex_list.c\
-	  main.c\
-	  draw.c\
-	  parser/mtl_parser.c\
-	  parser/mtl_set_functions.c\
-	  parser/mtl_set_functions_1.c\
-	  parser/obj_parser.c\
-	  parser/obj_set_functions.c\
-	  parser/obj_set_functions_1.c\
-	  print/mtl_print.c\
-	  matrix/print.c\
-	  matrix/basics.c\
-	  matrix/transpose.c\
-	  matrix/init.c\
-	  print/obj_print.c
+SRCS = $(addprefix $(SRC_DIR)/, $(SRC))
 
-#Colors
+OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(SRC))))
 
-_RED=$(shell tput setaf 1)
-_GREEN=$(shell tput setaf 2)
-_YELLOW=$(shell tput setaf 3)
-_BLUE=$(shell tput setaf 4)
-_PURPLE=$(shell tput setaf 5)
-_CYAN=$(shell tput setaf 6)
-_WHITE=$(shell tput setaf 7)
-_END=$(shell tput sgr0)
+OBJ_FILES = $(sort $(dir $(OBJS) $(dir $SHARED_OBJS)))
 
-SRCS = $(addprefix $(SRCDIR)/, $(SRC))
-OBJS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(basename $(SRC))))
-ALL_OBJ_DIR = $(sort $(dir $(OBJS)))
-INCS = $(addprefix -I, $(addsuffix /, $(INCDIR)))
-
-LIBFT = libft/libft.a ~/.brew/lib/libglfw3.a ~/.brew/lib/libGLEW.a
-
+LIBFT = libft/libft.a
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	make -C libft
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(FRAMEWORK) -I $(INCS) $(LIBFT)
-	@echo "$(_CYAN)\nCompiling library $(NAME)... $(_GREEN)DONE$(_END)"
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c includes/$(NAME).h
+	@gcc $(FLAGS) -o $@ -c $<  -I $(INCLUDE)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(ALL_OBJ_DIR) || true
-	@printf "                                                          \r"
-	@printf "$(_CYAN)Compiling $@$(_END)\r"
-	@$(CC) -o $@ -c $(CFLAGS) $< $(INCS)
+
+$(NAME): obj_dir $(OBJS)
+	@make -C libft
+	@gcc $(FLAGS) -o $(NAME) $(OBJS)  -I $(INCLUDE) -L libft -l ft
+	@echo $(NAME) is compiled
+
+obj_dir:
+	@mkdir -p $(OBJ_DIR) || true
 
 clean:
-	@echo "$(_RED)Removed objects (.o) files.$(_END)"
-	@/bin/rm -rf obj
-	make clean -C libft
+	@rm -rf $(OBJ_DIR)
+	@make -C libft clean
 
 fclean: clean
-	@echo "$(_RED)Removed ($(NAME)).$(_END)"
-	@/bin/rm -f $(NAME)
-	make fclean -C libft
+	@rm -f $(NAME)
+	@make -C libft fclean
 
-re: fclean
-	make all
+exec: $(NAME)
+	./$(NAME) www.google.com
+
+re: fclean all
+PHONY: $(NAME) all clean fclean re

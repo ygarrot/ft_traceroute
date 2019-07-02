@@ -6,7 +6,7 @@
 #    By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/11 12:06:15 by ygarrot           #+#    #+#              #
-#    Updated: 2019/05/10 16:19:21 by ygarrot          ###   ########.fr        #
+#    Updated: 2019/03/15 18:09:17 by ygarrot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -136,7 +136,6 @@ SRC += \
 	   get_next_line/get_filetochar.c
 
 SRC += \
-	   list/ft_lstfilter.c \
 	   list/ft_lstadd.c \
 	   list/ft_lstat.c \
 	   list/ft_lstdel.c \
@@ -228,7 +227,7 @@ $(NAME): $(OBJS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c includes/libft.h
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(ALL_OBJ_DIR) || true
 	@printf "                                                          \r"
 	@printf "$(_CYAN)Compiling $@$(_END)\r"
@@ -242,5 +241,8 @@ fclean: clean
 	@echo "$(_RED)Removed library ($(NAME)).$(_END)"
 	@/bin/rm -f $(NAME)
 
-re: fclean all
+re:
+	make fclean
+	make all
+
 

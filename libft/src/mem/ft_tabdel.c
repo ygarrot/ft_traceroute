@@ -1,28 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   ft_tabdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tcharrie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/17 16:19:30 by tcharrie          #+#    #+#             */
-/*   Updated: 2018/06/17 16:19:31 by tcharrie         ###   ########.fr       */
+/*   Created: 2018/05/11 11:16:44 by tcharrie          #+#    #+#             */
+/*   Updated: 2018/05/11 11:19:04 by tcharrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_lstsize(t_list *lst)
+void	ft_memmdel(char ***t)
 {
-	size_t	i;
+	int	i;
 
-	if (!lst)
-		return (0);
+	if (!t || !*t)
+		return ;
 	i = 0;
-	while (lst)
-	{
-		lst = lst->next;
-		i++;
-	}
-	return (i);
+	while (t[0][i])
+		free(tab[0][i++]);
+	free(t[0]);
+	t[0] = 0;
 }

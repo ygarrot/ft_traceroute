@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 19:45:08 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/05/09 13:42:50 by ygarrot          ###   ########.fr       */
+/*   Updated: 2017/11/13 13:04:05 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,11 @@ void	ft_lstdel(t_list **alst, void (*del)(void *, size_t))
 	t_list *maillon;
 
 	maillon = *alst;
-	if (!maillon)
-		return ;
-	ft_lstdel(&maillon->next, del);
-	ft_lstdelone(&maillon, del);
+	while (maillon)
+	{
+		del(maillon->content, maillon->content_size);
+		free(maillon);
+		maillon = maillon->next;
+	}
+	*alst = NULL;
 }

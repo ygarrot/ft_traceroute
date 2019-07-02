@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/13 15:53:58 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/04/29 16:01:37 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/01 18:10:04 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int		ping_receive(int sockfd, t_ping *ping)
 {
 	struct iovec	iov[1];
 	char			buffer[BUFF_S + 1];
+	struct			sockaddr_in from;
+	unsigned int			from_len;
 	struct msghdr	msg;
 
 	ft_bzero(&buffer, sizeof(buffer));
@@ -58,11 +60,13 @@ int		ping_receive(int sockfd, t_ping *ping)
 	msg.msg_namelen = ping->sockaddr_len;
 	msg.msg_iov = iov;
 	msg.msg_iovlen = 1;
-	if (recvmsg(sockfd, &msg, MSG_WAITALL) < 0)
+	from_len = sizeof(from);
+	if (recvfrom(sockfd, buffer, BUFF_S, 0, (struct sockaddr*)&from, &from_len) < 0)
 	{
 		ft_printf("Packet receive failed!\n");
 		return (ERROR_CODE);
 	}
+	printf("%s\n", inet_ntoa(from.sin_addr));
 	ping->pstat.rcv++;
 	return (1);
 }

@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   is_ipv.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcharrie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/17 16:19:30 by tcharrie          #+#    #+#             */
-/*   Updated: 2018/06/17 16:19:31 by tcharrie         ###   ########.fr       */
+/*   Created: 2019/03/04 17:16:15 by ygarrot           #+#    #+#             */
+/*   Updated: 2019/03/08 18:39:42 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ping.h"
 
-size_t	ft_lstsize(t_list *lst)
+int	ip_version(const char *src)
 {
-	size_t	i;
+	char	buf[16];
 
-	if (!lst)
-		return (0);
-	i = 0;
-	while (lst)
-	{
-		lst = lst->next;
-		i++;
-	}
-	return (i);
+	if (inet_pton(AF_INET, src, buf))
+		return (4);
+	else if (inet_pton(AF_INET6, src, buf))
+		return (6);
+	return (-1);
 }

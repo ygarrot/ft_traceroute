@@ -24,6 +24,7 @@ INCLUDE =  includes/
 
 OBJ_DIR = obj
 
+CC = gcc
 SRC =\
 	 ping_struct.c\
 	 setopt.c\
@@ -48,12 +49,12 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c includes/$(NAME).h
-	@clang $(FLAGS) -o $@ -c $<  -I $(INCLUDE)
+	@$(CC) $(FLAGS) -o $@ -c $<  -I $(INCLUDE)
 
 
 $(NAME): obj_dir $(OBJS)
 	@make -C libft
-	@clang $(FLAGS) -o $(NAME) $(OBJS)  -I $(INCLUDE) -L libft -l ft
+	@$(CC) $(FLAGS) -o $(NAME) $(OBJS)  -I $(INCLUDE) -L libft -l ft
 	@echo $(NAME) is compiled
 
 obj_dir:

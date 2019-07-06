@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/15 17:10:14 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/03/17 11:43:22 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/06 15:35:37 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ping_ctor(t_ping *ping)
 {
-	ft_bzero(&ping->packet, sizeof(t_packet));
+	ft_bzero(&ping->packet, sizeof(ping->packet));
 	ft_bzero(&ping->pstat, sizeof(t_packet_stat));
 	ft_bzero(&ping->tstat, sizeof(t_time_stat));
 	ping->pstat.size = PACKET_SIZE_DEFAULT;

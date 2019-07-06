@@ -6,52 +6,39 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 15:45:55 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/02 17:07:20 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/06 16:25:39 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ping.h"
 
-int set_packet(t_packet *pckt, t_ping *ping)
+int set_packet(t_ping *ping)
 {
-	/* struct ip *iph = (struct ip *) buffer; */
-	/* pckt.icmphd = (struct icmphdr*)(buffer + sizeof(struct ip)); */
-	pckt->iph = (struct ip){
+	static int ttl= 1;
+	struct ip *iph = (struct ip *) ping->packet;
+	struct icmphdr *icmph = (struct icmphdr*)(ping->packet + sizeof(struct ip));
+
+	iph = &(struct ip){
 		.ip_hl = 5,
 	.ip_v = 4,
 	.ip_tos = 0,
 	.ip_len = sizeof(struct ip) + sizeof(struct icmphdr),
-	.ip_id = getpid(),
+	.ip_id = htons(getuid()),
 	.ip_off = 0,
-	.ip_ttl = 0,
-	.ip_p = 6,
-	.ip_sum = checksum(pckt, sizeof(struct ip)),
+	.ip_ttl = ttl,
+	.ip_p = IPPROTO_ICMP,
 	};
-	inet_pton (AF_INET, ping->host_name, &(pckt->iph.ip_dst));
-	pckt->icmph = (struct icmphdr){
+	inet_pton (AF_INET, "192.168.1.168", &(iph->ip_src));
+	inet_pton (AF_INET, ping->host_name, &(iph->ip_dst));
+
+	icmph = &(struct icmphdr){
 	.type = ICMP_ECHO,
 	.code = 0,
-	.un.echo.id = getpid(),
-	.un.echo.sequence = 1,
-	.checksum = checksum (pckt + sizeof(struct ip), sizeof(struct icmphdr)),
-			};
+	/* .un.echo.id = getpid(), */
+	.un.echo.sequence = ttl + 1,
+		};
+	iph->ip_sum = checksum(ping->packet, sizeof(struct ip));
+	icmph->checksum = checksum (icmph, sizeof(struct icmphdr));
+	++ttl;
 	return (1);
 }
-
-
-/* int		set_packet(t_packet *pckt, t_ping *ping) */
-/* { */
-/* 	static int	msg_count = 0; */
-/* 	int			i; */
-
-/* 	i = -1; */
-/* 	ft_bzero(pckt, sizeof(t_packet)); */
-/* 	pckt->hdr.type = ICMP_ECHO; */
-/* 	pckt->hdr.un.echo.id = getpid(); */
-/* 	while (++i < ping->pstat.size - 1) */
-/* 		pckt->msg[i] = i + '0'; */
-/* 	pckt->msg[i] = 0; */
-/* 	pckt->hdr.un.echo.sequence = msg_count++; */
-/* 	pckt->hdr.checksum = checksum(pckt, sizeof(t_packet)); */
-/* 	return (1); */
-/* } */

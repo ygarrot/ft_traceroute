@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 12:53:58 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/02 17:06:34 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/06 15:35:44 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,11 @@ typedef struct hostent		t_hostent;
 typedef struct addrinfo		t_addrinfo;
 int				ip_version(const char *src);
 
-typedef struct s_packet
-{
-	struct ip		iph;
-	struct icmphdr	icmph;
-}				t_packet;
+/* typedef struct s_packet */
+/* { */
+/* 	struct ip		iph; */
+/* 	struct icmphdr	icmph; */
+/* }				t_tmp; */
 
 /* typedef struct	s_packet */
 /* { */
@@ -120,7 +120,7 @@ typedef struct	s_ping
 {
 	t_sockaddr		*sockaddr;
 	t_addrinfo		*host_entity;
-	t_packet		packet;
+	char		packet[4096];
 	t_packet_stat	pstat;
 	t_time_stat		tstat;
 	char			*opt_tab[HELP + 1];
@@ -153,8 +153,8 @@ void			display_help(t_ping *ping, char *value);
 int				set_time_stat(t_ping *ping);
 int				print_ping(t_ping *ping);
 int				print_stat(t_ping *ping);
-int				ping_send(t_packet *data, int socket, t_ping *ping);
-int				set_packet(t_packet *pckt, t_ping *ping);
+int				ping_send(int socket, t_ping *ping);
+int				set_packet(t_ping *ping);
 int				set_socket(int is_ipv4);
 int				ping_receive(int sockfd, t_ping *ping);
 int				ping_loop(t_ping *ping);

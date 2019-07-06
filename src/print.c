@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/13 15:56:47 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/04/29 16:03:33 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/06 15:36:33 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	print_ping(t_ping *ping)
 {
-	printf("%ld bytes from ", sizeof(t_packet));
+	printf("%ld bytes from ", sizeof(ping->packet));
 	if (ping->opt & NUMERIC)
 		printf("%s:", ping->host_addr);
 	else
@@ -44,6 +44,6 @@ int	print_summary(t_ping *ping)
 {
 	printf("PING %s (%s) %ld(%d) bytes of data.\n",
 			ping->host_entity->ai_canonname, ping->host_addr,
-			sizeof(t_packet), ping->pstat.size);
+			sizeof(ping->packet), ping->pstat.size);
 	return (1);
 }

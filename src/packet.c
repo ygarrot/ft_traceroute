@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 15:45:55 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/06 16:25:39 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/07 12:31:41 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ int set_packet(t_ping *ping)
 		.ip_hl = 5,
 	.ip_v = 4,
 	.ip_tos = 0,
-	.ip_len = sizeof(struct ip) + sizeof(struct icmphdr),
-	.ip_id = htons(getuid()),
+	.ip_len = htons(sizeof(struct ip) + sizeof(struct icmphdr)),
+	.ip_id = htons(getpid() & 0xffff),
 	.ip_off = 0,
 	.ip_ttl = ttl,
 	.ip_p = IPPROTO_ICMP,

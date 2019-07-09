@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/05 12:21:09 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/06 16:12:23 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/07 14:44:46 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ int		set_socket(int is_ipv4)
 {
 	int			sock;
 
-	if ((sock = socket(is_ipv4 ? AF_INET
-					: AF_INET6, SOCK_RAW, IPPROTO_ICMP)) < -1)
+	(void)is_ipv4;
+	/* if ((sock = socket(is_ipv4 ? AF_INET */
+	/* 				: AF_INET6, SOCK_RAW, IPPROTO_ICMP)) < -1) */
+	/* 	ft_exit(SOCKET_ERROR, EXIT_FAILURE); */
+	if ((sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < -1)
 		ft_exit(SOCKET_ERROR, EXIT_FAILURE);
 	return (sock);
 }
@@ -40,11 +43,11 @@ int		reverse_dns_lookup(t_ping *ping)
 int		create_socket(t_ping *ping, int is_ipv4)
 {
 	int				sock;
-	int				reuseaddr;
+	/* int				reuseaddr; */
 	t_sockaddr_in6	sin2;
 	t_sockaddr_in	sin;
 
-	reuseaddr = 1;
+	/* reuseaddr = 1; */
 	ft_bzero(&sin2, sizeof(sin2));
 	ft_bzero(&sin, sizeof(sin));
 	sock = set_socket(is_ipv4);

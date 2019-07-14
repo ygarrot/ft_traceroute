@@ -6,11 +6,11 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/13 15:56:47 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/06 15:36:33 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/14 14:06:36 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ping.h"
+#include "ft_traceroute.h"
 
 int	print_ping(t_ping *ping)
 {

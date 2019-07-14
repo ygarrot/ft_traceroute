@@ -6,11 +6,11 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/05 12:21:09 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/07 14:44:46 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/14 14:06:36 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ping.h"
+#include "ft_traceroute.h"
 
 int		set_socket(int is_ipv4)
 {
@@ -91,6 +91,7 @@ int		check_addr(t_ping *ping)
 	is_ipv4 = ping->host_entity->ai_family == PF_INET;
 	inet_ntop(ping->host_entity->ai_family, ptr,
 			ping->host_addr, 100);
+	ping->des = ((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr.s_addr;
 	if (reverse_dns_lookup(ping) == ERROR_CODE)
 		return (ERROR_CODE);
 	return (create_socket(ping, is_ipv4));

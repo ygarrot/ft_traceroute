@@ -6,11 +6,11 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/13 15:53:58 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/09 19:13:30 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/14 14:06:36 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ping.h"
+#include "ft_traceroute.h"
 
 int		ping_send(int socket, t_ping *ping)
 {
@@ -36,15 +36,16 @@ int		ping_receive(int sockfd, t_ping *ping)
 	fd_set rdfds;
 
 	/* tv_out.tv_sec = ping->tstat.timeout; */
-	tv_out.tv_sec = 1;
+	tv_out.tv_sec = 3;
 	tv_out.tv_usec = 0;
 
 	from_len = sizeof(struct sockaddr_in);
-	while (1)
+	int i = -1;
+	while (++i < 30 * 3)
 	{
 		FD_ZERO(&rdfds);
 		FD_SET(sockfd, &rdfds);
-		if (select(sockfd + 1, &rdfds, 0, 0, &tv_out) <= 0)
+		if (select(sockfd + 1, &rdfds, 0, 0, &tv_out) < 0)
 			ft_exit("select failed\n", EXIT_FAILURE);
 		if (FD_ISSET(sockfd, &rdfds))
 		{
@@ -54,14 +55,15 @@ int		ping_receive(int sockfd, t_ping *ping)
 				ft_printf("Packet receive failed!\n");
 				return (ERROR_CODE);
 			}
-			break ;
-		}
-	}
 	struct icmphdr *icmph = (struct icmphdr*)(buff + 20);
 	if (icmph->type == 0)
 		exit(0);
-	printf("[%s]\n", inet_ntoa(from.sin_addr));
+	struct ip *fr = (struct ip*)buff;
+	char *ip = inet_ntoa(fr->ip_src); 
+	printf("[%s]\n", ip);
 	ping->pstat.rcv++;
-
+			/* break ; */
+		}
+	}
 	return (1);
 }

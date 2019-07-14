@@ -6,11 +6,11 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 11:11:27 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/09 19:04:44 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/07/14 14:07:37 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_ping.h"
+#include "ft_traceroute.h"
 
 t_ping *g_ping;
 
@@ -27,10 +27,18 @@ int		usage(int ac, char **av)
 
 void	ft_ping(t_ping *ping)
 {
-	set_packet(ping);
-	ping_send(ping->socket, ping);
+	ping->ttl = 0;
+	while (++ping->ttl < 30)
+	{
+		ping->queries = -1;
+		while (++ping->queries < 3)
+		{
+			set_packet(ping);
+			ping_send(ping->socket, ping);
+		}
+	}
 	ping_receive(ping->socket, ping);
-	ping->tstat.intervale = intervale();
+	/* ping->tstat.intervale = intervale(); */
 	/* if (!(ping->opt & QUIET)) */
 	/* 	print_ping(ping); */
 	ping->pstat.count++;
@@ -39,26 +47,14 @@ void	ft_ping(t_ping *ping)
 
 int		ping_loop(t_ping *ping)
 {
-	/* struct timeval tv_out; */
-
-	/* tv_out.tv_sec = ping->tstat.timeout; */
-	/* tv_out.tv_usec = 0; */
-	/* if (setsockopt(ping->socket, SOL_IP, IP_TTL, */
-	/* 			&ping->tstat.ttl, sizeof(int)) != 0) */
-	/* { */
-	/* 	ft_printf("\nSetting socket options  TTL failed!\n"); */
-	/* 	return (1); */
-	/* } */
 	int t = 1;
 	if (setsockopt (ping->socket, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) < 0)
 		printf ("Cannot set HDRINCL!\n");
-	/* setsockopt(ping->socket, SOL_SOCKET, SO_RCVTIMEO, */
-	/* 		(const char*)&tv_out, sizeof(tv_out)); */
 	gettimeofday(&ping->tstat.start, 0);
-	while (1)
-	{
+	/* while (1) */
+	/* { */
 		ft_ping(ping);
-	}
+	/* } */
 	return (1);
 }
 

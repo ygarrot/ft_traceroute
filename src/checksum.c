@@ -48,8 +48,8 @@ unsigned short in_cksum(unsigned short *addr, int len)
 		sum += answer; 
 	} 
 
-	sum = (sum >> 16) + (sum & 0xffff);        
-	sum += (sum >> 16);          
-	answer = ~sum;            
-	return (answer); 
+	sum = (sum >> 16) + (sum & 0xffff);
+	sum += (sum >> 16);
+	answer = ~sum;
+	return (answer);
 } 

@@ -18,7 +18,7 @@ int		ping_send(int socket, t_ping *ping)
 			SENT_PACKET_SIZE,
 				0,
 				(struct sockaddr*)ping->sockaddr,
-				ping->sockaddr_len) <= 0)
+				sizeof(struct sockaddr_in)) <= 0)
 	{
 		ft_exit("connect: invalid argument", EXIT_FAILURE);
 		return (ERROR_CODE);
@@ -30,22 +30,21 @@ int		ping_send(int socket, t_ping *ping)
 int		ping_receive(int sockfd, t_ping *ping)
 {
 	struct sockaddr_in	from;
-	char buff[BUFF_S] = { 0 };
 	socklen_t		from_len;
-	struct timeval tv_out;
+	char buff[RECV_PACKET_SIZE] = { 0 };
+	struct timeval tv_out = {
+		.tv_sec = SELECT_TIMEOUT,
+	};
 	fd_set rdfds;
 
 	/* tv_out.tv_sec = ping->tstat.timeout; */
-	tv_out.tv_sec = 3;
-	tv_out.tv_usec = 0;
-
 	from_len = sizeof(struct sockaddr_in);
 	int i = -1;
-	while (++i < 30 * 3)
+	while (++i < TRC_MAX_TTL * TRC_QUERIES)
 	{
 		FD_ZERO(&rdfds);
 		FD_SET(sockfd, &rdfds);
-		if (select(sockfd + 1, &rdfds, 0, 0, &tv_out) < 0)
+		if (select(sockfd + 1, &rdfds, NULL, NULL, &tv_out) == ERROR_CODE)
 			ft_exit("select failed\n", EXIT_FAILURE);
 		if (FD_ISSET(sockfd, &rdfds))
 		{
@@ -55,14 +54,13 @@ int		ping_receive(int sockfd, t_ping *ping)
 				ft_printf("Packet receive failed!\n");
 				return (ERROR_CODE);
 			}
-			struct icmphdr *icmph = (struct icmphdr*)(buff + 20);
-			if (icmph->type == 0)
-				exit(0);
+			/* struct icmphdr *icmph = (struct icmphdr*)(buff + 20); */
+			/* if (icmph->type == 0) */
+			/* 	exit(0); */
 			struct ip *fr = (struct ip*)buff;
 			char *ip = inet_ntoa(fr->ip_src); 
 			printf("[%s]\n", ip);
 			ping->pstat.rcv++;
-			/* break ; */
 		}
 	}
 	return (1);

@@ -17,21 +17,18 @@ t_ping *g_ping;
 int		usage(int ac, char **av)
 {
 	(void)av;
-	if (ac < 2)
-	{
-		ft_printf("Please give me an address and (maybe) a port\n");
-		return (1);
-	}
-	return (0);
+	if (ac >= 2)
+		return (0);
+	ft_printf("Please give me an address and (maybe) a port\n");
+	return (1);
 }
 
 void	ft_ping(t_ping *ping)
 {
-	ping->ttl = 0;
-	while (++ping->ttl < 30)
+	while (++ping->ttl < TRC_MAX_TTL)
 	{
 		ping->queries = -1;
-		while (++ping->queries < 3)
+		while (++ping->queries < TRC_QUERIES)
 		{
 			set_packet(ping);
 			ping_send(ping->socket, ping);
@@ -47,10 +44,7 @@ void	ft_ping(t_ping *ping)
 
 int		ping_loop(t_ping *ping)
 {
-	int t = 1;
-	if (setsockopt (ping->socket, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) < 0)
-		printf ("Cannot set HDRINCL!\n");
-	gettimeofday(&ping->tstat.start, 0);
+	/* gettimeofday(&ping->tstat.start, 0); */
 	ft_ping(ping);
 	return (1);
 }

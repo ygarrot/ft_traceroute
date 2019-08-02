@@ -36,6 +36,10 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 
+# include <stdbool.h>
+# include <sys/socket.h>
+# include <sys/types.h>
+
 # define PING_BAD_COUNT "ping: bad number of packets to transmit."
 # define SOCKET_ERROR "socket error"
 # define BUFF_S 1500
@@ -47,8 +51,13 @@
 # define PORT_TMP 12
 # define OPT_STR "cdinqsStTvwWh"
 
-# define PAYLOAD_SIZE 32
-# define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr) + PAYLOAD_SIZE)
+#define IP_HDR_SIZE sizeof(struct ip)
+#define ICMP_HDR_SIZE sizeof(struct icmphdr)
+# define RECV_PACKET_SIZE	(IP_HDR_SIZE + ICMP_HDR_SIZE + IP_HDR_SIZE + ICMP_HDR_SIZE)
+# define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr))
+#define TRC_MAX_TTL 30
+#define TRC_QUERIES 3
+#define SELECT_TIMEOUT 3
 /* # define FT_PACKET_SIZE sizeof(struct ip) + sizeof(struct icmphdr) */
 
 enum {
@@ -129,11 +138,6 @@ typedef struct	s_ping
 	int ttl;
 }				t_ping;
 
-# define __unused				__attribute__((unused))
-# define __noreturn				__attribute__((noreturn))
-# define __warn_unused_result	__attribute__((warn_unused_result))
-
-/* uint16_t		in_cksum(__unused const void *buffer, __unused size_t size); */
 unsigned short		checksum(void *b, int len);
 unsigned short in_cksum(unsigned short *addr, int len);
 double			timeval_to_double(t_timeval last_time, t_timeval current_time);

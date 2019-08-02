@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 11:11:27 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/14 14:07:37 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/08/02 10:48:55 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,8 @@ int		ping_loop(t_ping *ping)
 	int t = 1;
 	if (setsockopt (ping->socket, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) < 0)
 		printf ("Cannot set HDRINCL!\n");
-	gettimeofday(&ping->tstat.start, 0);
-	/* while (1) */
-	/* { */
-		ft_ping(ping);
-	/* } */
+	/* gettimeofday(&ping->tstat.start, 0); */
+	ft_ping(ping);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 12:53:58 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/14 14:04:14 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/08/02 12:01:35 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,18 +76,6 @@ typedef struct icmphdr		t_icmphdr;
 typedef struct hostent		t_hostent;
 typedef struct addrinfo		t_addrinfo;
 int				ip_version(const char *src);
-
-/* typedef struct s_packet */
-/* { */
-/* 	struct ip		iph; */
-/* 	struct icmphdr	icmph; */
-/* }				t_tmp; */
-
-/* typedef struct	s_packet */
-/* { */
-/* 	t_icmphdr	hdr; */
-/* 	char		msg[PACKET_SIZE_DEFAULT - sizeof(t_icmphdr)]; */
-/* }				t_packet; */
 
 typedef struct	s_packet_stat
 {

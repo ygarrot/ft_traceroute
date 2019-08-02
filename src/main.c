@@ -50,7 +50,7 @@ int		ping_loop(t_ping *ping)
 	int t = 1;
 	if (setsockopt (ping->socket, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) < 0)
 		printf ("Cannot set HDRINCL!\n");
-	/* gettimeofday(&ping->tstat.start, 0); */
+	gettimeofday(&ping->tstat.start, 0);
 	ft_ping(ping);
 	return (1);
 }
@@ -71,7 +71,7 @@ int		main(int ac, char **av)
 	ping_ctor(&ping);
 	ping.host_name = av[1];
 	if ((ping.socket = check_addr(&ping)) == ERROR_CODE)
-		return (EXIT_FAILURE);
+		ft_exit("check addr", EXIT_FAILURE);
 	print_summary(&ping);
 	ping_loop(&ping);
 }

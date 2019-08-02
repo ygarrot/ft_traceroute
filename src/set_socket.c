@@ -17,8 +17,11 @@ int		set_socket(int is_ipv4)
 	int			sock;
 
 	(void)is_ipv4;
-	if ((sock = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < -1)
+	if ((sock = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) == ERROR_CODE)
+	{
+		perror("socket");
 		ft_exit(SOCKET_ERROR, EXIT_FAILURE);
+	}
 	return (sock);
 }
 
@@ -44,6 +47,8 @@ int		create_socket(t_ping *ping, int is_ipv4)
 	sock = set_socket(is_ipv4);
 	ping->sockaddr = ping->host_entity->ai_addr;
 	ping->sockaddr_len = ping->host_entity->ai_addrlen;
+	if (sock == ERROR_CODE)
+		ft_printf("socket failed\n");
 	return (sock);
 }
 
@@ -84,6 +89,9 @@ int		check_addr(t_ping *ping)
 			ping->host_addr, 100);
 	ping->des = ((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr.s_addr;
 	if (reverse_dns_lookup(ping) == ERROR_CODE)
+	{
+		ft_printf("reverse dns lookup\n");
 		return (ERROR_CODE);
+	}
 	return (create_socket(ping, is_ipv4));
 }

@@ -37,7 +37,7 @@
 # include <netinet/ip_icmp.h>
 
 # define PING_BAD_COUNT "ping: bad number of packets to transmit."
-#define SOCKET_ERROR "socket error"
+# define SOCKET_ERROR "socket error"
 # define BUFF_S 1500
 # define PACKET_SIZE_DEFAULT 64
 # define DEFAULT_TIMEOUT 1
@@ -46,6 +46,10 @@
 # define ERROR_CODE -1
 # define PORT_TMP 12
 # define OPT_STR "cdinqsStTvwWh"
+
+# define PAYLOAD_SIZE 32
+# define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr) + PAYLOAD_SIZE)
+/* # define FT_PACKET_SIZE sizeof(struct ip) + sizeof(struct icmphdr) */
 
 enum {
 	COUNT = (1 << 0),
@@ -111,7 +115,7 @@ typedef struct	s_ping
 	t_packet_stat	pstat;
 	t_time_stat		tstat;
 	int32_t des;
-	char		packet[4096];
+	char		packet[SENT_PACKET_SIZE];
 	char			*opt_tab[HELP + 1];
 	int				opt;
 	char			host_addr[100];
@@ -125,7 +129,13 @@ typedef struct	s_ping
 	int ttl;
 }				t_ping;
 
-unsigned short	checksum(void *b, int len);
+# define __unused				__attribute__((unused))
+# define __noreturn				__attribute__((noreturn))
+# define __warn_unused_result	__attribute__((warn_unused_result))
+
+/* uint16_t		in_cksum(__unused const void *buffer, __unused size_t size); */
+unsigned short		checksum(void *b, int len);
+unsigned short in_cksum(unsigned short *addr, int len);
 double			timeval_to_double(t_timeval last_time, t_timeval current_time);
 double			intervale(void);
 
@@ -154,6 +164,7 @@ int				check_addr(t_ping *ping);
 int				wait_for (double sec);
 int				print_summary(t_ping *ping);
 int				reverse_dns_lookup(t_ping *ping);
+
 
 extern t_ping *g_ping;
 #endif

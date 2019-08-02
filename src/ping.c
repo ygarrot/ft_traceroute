@@ -15,9 +15,9 @@
 int		ping_send(int socket, t_ping *ping)
 {
 	if (sendto(socket, ping->packet,
-				sizeof(struct ip) + sizeof(struct icmphdr),
+			SENT_PACKET_SIZE,
 				0,
-				(t_sockaddr*)ping->sockaddr,
+				(struct sockaddr*)ping->sockaddr,
 				ping->sockaddr_len) <= 0)
 	{
 		ft_exit("connect: invalid argument", EXIT_FAILURE);
@@ -55,13 +55,13 @@ int		ping_receive(int sockfd, t_ping *ping)
 				ft_printf("Packet receive failed!\n");
 				return (ERROR_CODE);
 			}
-	struct icmphdr *icmph = (struct icmphdr*)(buff + 20);
-	if (icmph->type == 0)
-		exit(0);
-	struct ip *fr = (struct ip*)buff;
-	char *ip = inet_ntoa(fr->ip_src); 
-	printf("[%s]\n", ip);
-	ping->pstat.rcv++;
+			struct icmphdr *icmph = (struct icmphdr*)(buff + 20);
+			if (icmph->type == 0)
+				exit(0);
+			struct ip *fr = (struct ip*)buff;
+			char *ip = inet_ntoa(fr->ip_src); 
+			printf("[%s]\n", ip);
+			ping->pstat.rcv++;
 			/* break ; */
 		}
 	}

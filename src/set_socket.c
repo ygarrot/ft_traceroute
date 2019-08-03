@@ -24,7 +24,7 @@ int		set_socket(int is_ipv4)
 		perror("socket");
 		ft_exit(SOCKET_ERROR, EXIT_FAILURE);
 	}
-	if (setsockopt (sock, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) < 0)
+	if (setsockopt (sock, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) == ERROR_CODE)
 		printf ("Cannot set HDRINCL!\n");
 	return (sock);
 }
@@ -73,7 +73,7 @@ int		check_addr(t_ping *ping)
 	void		*ptr;
 	int		is_ipv4;
 	t_addrinfo	tmp = (t_addrinfo){
-		.ai_family = PF_UNSPEC,
+		.ai_family = AF_INET,
 		.ai_socktype = SOCK_RAW,
 		.ai_flags = AI_CANONNAME,
 	};

@@ -25,11 +25,13 @@ int		usage(int ac, char **av)
 
 void	ft_ping(t_ping *ping)
 {
+	ping->ttl = 0;
 	while (++ping->ttl < TRC_MAX_TTL)
 	{
 		ping->queries = -1;
 		while (++ping->queries < TRC_QUERIES)
 		{
+			gettimeofday(&ping->route[ping->ttl][ping->queries], 0);
 			set_packet(ping);
 			ping_send(ping->socket, ping);
 		}
@@ -40,13 +42,6 @@ void	ft_ping(t_ping *ping)
 	/* 	print_ping(ping); */
 	ping->pstat.count++;
 	/* set_time_stat(ping); */
-}
-
-int		ping_loop(t_ping *ping)
-{
-	/* gettimeofday(&ping->tstat.start, 0); */
-	ft_ping(ping);
-	return (1);
 }
 
 int		main(int ac, char **av)
@@ -67,5 +62,5 @@ int		main(int ac, char **av)
 	if ((ping.socket = check_addr(&ping)) == ERROR_CODE)
 		ft_exit("check addr", EXIT_FAILURE);
 	print_summary(&ping);
-	ping_loop(&ping);
+	ft_ping(&ping);
 }

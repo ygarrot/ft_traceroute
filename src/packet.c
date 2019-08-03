@@ -12,24 +12,26 @@
 
 #include "ft_traceroute.h"
 
-int set_ip_struct(t_ping *ping)
+int	set_ip_struct(t_ping *ping)
 {
 	struct ip *iph = (struct ip *) ping->packet;
 
 	iph->ip_hl = 5;
 	iph->ip_v = 4;
 	iph->ip_tos = 0;
+	iph->ip_len = SENT_PACKET_SIZE;
 	iph->ip_id = htons(getpid() & 0xff);
 	iph->ip_id = htons(0);
 	iph->ip_off = 0;
 	iph->ip_ttl = ping->ttl;
 	iph->ip_p = IPPROTO_ICMP;
+	iph->ip_sum = 0;
 	iph->ip_src.s_addr = INADDR_ANY;
 	iph->ip_dst.s_addr = ping->des;
 	return (1);
 }
 
-int set_icmp_struct(t_ping *ping)
+int	set_icmp_struct(t_ping *ping)
 {
 	struct icmphdr *icmph = (struct icmphdr*)(ping->packet + sizeof(struct ip));
 
@@ -38,11 +40,12 @@ int set_icmp_struct(t_ping *ping)
 	icmph->un.echo.id = htons(ping->ttl);
 	icmph->un.echo.sequence = htons(ping->queries);
 	icmph->checksum = 0;
-	icmph->checksum = in_cksum((unsigned short*)icmph, sizeof(struct icmphdr));
+	icmph->checksum =
+		in_cksum((unsigned short*)icmph, sizeof(struct icmphdr));
 	return (1);
 }
 
-int set_packet(t_ping *ping)
+int	set_packet(t_ping *ping)
 {
 	ft_bzero(ping->packet, sizeof(ping->packet));
 	set_ip_struct(ping);

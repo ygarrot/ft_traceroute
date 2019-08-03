@@ -44,7 +44,7 @@
 # define SOCKET_ERROR "socket error"
 # define BUFF_S 1500
 # define PACKET_SIZE_DEFAULT 64
-# define DEFAULT_TIMEOUT 1
+# define DEFAULT_TIMEOUT 3
 # define DEFAULT_DELAY 1.0
 # define TTL_DEFAULT 64
 # define ERROR_CODE -1
@@ -57,7 +57,6 @@
 # define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr))
 #define TRC_MAX_TTL 30
 #define TRC_QUERIES 3
-#define SELECT_TIMEOUT 3
 /* # define FT_PACKET_SIZE sizeof(struct ip) + sizeof(struct icmphdr) */
 
 enum {
@@ -121,21 +120,22 @@ typedef struct	s_ping
 {
 	t_sockaddr		*sockaddr;
 	t_addrinfo		*host_entity;
-	t_packet_stat	pstat;
+	t_packet_stat		pstat;
 	t_time_stat		tstat;
-	int32_t des;
-	char		packet[SENT_PACKET_SIZE];
+	t_timeval		route[TRC_MAX_TTL][TRC_QUERIES];
+
+	int32_t			des;
+	char			packet[SENT_PACKET_SIZE];
 	char			*opt_tab[HELP + 1];
-	int				opt;
+	int			opt;
 	char			host_addr[100];
 	char			dns_addr[NI_MAXHOST];
 	char			*host_name;
-	int				socket;
-	int				sockaddr_len;
-	int				port;
-
-	int queries;
-	int ttl;
+	int			socket;
+	int			sockaddr_len;
+	int			port;
+	int			queries;
+	int			ttl;
 }				t_ping;
 
 unsigned short		checksum(void *b, int len);

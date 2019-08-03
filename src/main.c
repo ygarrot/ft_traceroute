@@ -25,23 +25,18 @@ int		usage(int ac, char **av)
 
 void	ft_ping(t_ping *ping)
 {
-	ping->ttl = 0;
-	while (++ping->ttl < TRC_MAX_TTL)
+	ping->env.ttl = 0;
+	while (++ping->env.ttl < ping->env.max_ttl)
 	{
-		ping->queries = -1;
-		while (++ping->queries < TRC_QUERIES)
+		ping->env.tries = -1;
+		while (++ping->env.tries < ping->env.max_tries)
 		{
-			gettimeofday(&ping->route[ping->ttl][ping->queries], 0);
+			gettimeofday(&ping->route[ping->env.ttl].tries[ping->env.tries], 0);
 			set_packet(ping);
 			ping_send(ping->socket, ping);
 		}
 	}
 	ping_receive(ping->socket, ping);
-	/* ping->tstat.intervale = intervale(); */
-	/* if (!(ping->opt & QUIET)) */
-	/* 	print_ping(ping); */
-	ping->pstat.count++;
-	/* set_time_stat(ping); */
 }
 
 int		main(int ac, char **av)

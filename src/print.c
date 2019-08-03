@@ -12,38 +12,30 @@
 
 #include "ft_traceroute.h"
 
-int	print_ping(t_ping *ping)
-{
-	printf("%ld bytes from ", sizeof(ping->packet));
-	if (ping->opt & NUMERIC)
-		printf("%s:", ping->host_addr);
-	else
-		printf("%s (%s):", ping->dns_addr, ping->host_addr);
-	printf(" icmp_seq=%d ttl=%d time=%.2Lf ms\n",  \
-			ping->pstat.count + 1,
-			ping->tstat.ttl, ping->tstat.intervale);
-	return (1);
-}
-
-int	print_stat(t_ping *ping)
-{
-	printf("\n--- %s ping statistics ---\n", ping->host_entity->ai_canonname);
-	printf("%d packets transmitted, %d received,"
-			" %d%% packet loss, time %.0Lf ms\n",
-			ping->pstat.send, ping->pstat.rcv,
-			(int)(((double)(ping->pstat.send
-						- ping->pstat.rcv) / ping->pstat.count) * 100),
-			ping->tstat.all);
-	printf("rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
-			ping->tstat.min, ping->tstat.avg,
-			ping->tstat.max, ping->tstat.mdev);
-	return (1);
-}
-
 int	print_summary(t_ping *ping)
 {
-	printf("PING %s (%s) %ld(%d) bytes of data.\n",
+	printf("traceroute to %s (%s), %d max hope %ld bytes packets\n",
 			ping->host_entity->ai_canonname, ping->host_addr,
-			sizeof(ping->packet), ping->pstat.size);
+			ping->env.max_ttl,
+			sizeof(ping->packet));
+	return (1);
+}
+
+int	print_foreach(t_ping *ping, int *ttls)
+{
+	static int current_ttl = 0;
+	int		i;
+
+		
+	i = -1;
+	while (ttls[current_ttl] == 3)
+	{
+		printf("%d %s", current_ttl, ping->route[current_ttl].addr);
+		while (++i < ping->env.max_tries)
+		{
+			;
+			/* printf("%dms", ping->route[current_ttl].tries[i]); */
+		}
+	}
 	return (1);
 }

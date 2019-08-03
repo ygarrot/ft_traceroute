@@ -23,7 +23,7 @@ int	set_ip_struct(t_ping *ping)
 	iph->ip_id = htons(getpid() & 0xff);
 	iph->ip_id = htons(0);
 	iph->ip_off = 0;
-	iph->ip_ttl = ping->ttl;
+	iph->ip_ttl = ping->env.ttl;
 	iph->ip_p = IPPROTO_ICMP;
 	iph->ip_sum = 0;
 	iph->ip_src.s_addr = INADDR_ANY;
@@ -37,8 +37,8 @@ int	set_icmp_struct(t_ping *ping)
 
 	icmph->type = ICMP_ECHO;
 	icmph->code = 0;
-	icmph->un.echo.id = htons(ping->ttl);
-	icmph->un.echo.sequence = htons(ping->queries);
+	icmph->un.echo.id = htons(ping->env.ttl);
+	icmph->un.echo.sequence = htons(ping->env.tries);
 	icmph->checksum = 0;
 	icmph->checksum =
 		in_cksum((unsigned short*)icmph, sizeof(struct icmphdr));

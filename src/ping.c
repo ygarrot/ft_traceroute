@@ -23,13 +23,12 @@ int		ping_send(int socket, t_ping *ping)
 		ft_exit("connect: invalid argument", EXIT_FAILURE);
 		return (ERROR_CODE);
 	}
-	ping->pstat.send++;
 	return (1);
 }
 
 int		recv_ping(t_ping *ping, char *buff, int sockfd)
 {
-	static int 		first_ttl = TRC_MAX_TTL - 1;
+	static int 		first_ttl = - 1;
 	struct sockaddr_in	from;
 	socklen_t		from_len;
 	struct icmphdr		*icmph;
@@ -37,6 +36,7 @@ int		recv_ping(t_ping *ping, char *buff, int sockfd)
 
 	int ttl;
 	int icmp_type;
+	(void)ping;
 
 	from_len = sizeof(struct sockaddr_in);
 	if (recvfrom(sockfd, buff, RECV_PACKET_SIZE, 0, (struct sockaddr*)&from, &from_len) == ERROR_CODE)
@@ -58,20 +58,9 @@ int		recv_ping(t_ping *ping, char *buff, int sockfd)
 	if (ttl > first_ttl)
 		return(1);
 	ft_printf("[%s] -> ", inet_ntoa(fr->ip_src));
-	/* ft_printf("{boldred}struct icmph:"); */
-	/* ft_printf(" code: %d", icmph->code); */
 	ft_printf(" ttl: %d", ntohs(icmph->un.echo.id));
 	ft_printf(" sequence: %d", ntohs(icmph->un.echo.sequence));
-	/* ft_printf("{boldblue}struct ip:"); */
-	/* ft_printf("hl: %d", fr->ip_hl); */
-	/* ft_printf("version: %d", fr->ip_v); */
-	/* ft_printf(" tos: %d", fr->ip_tos); */
-	/* ft_printf(" len: %d", fr->ip_len); */
-	/* ft_printf(" id: %d", fr->ip_id); */
-	/* ft_printf(" off: %d", fr->ip_off); */
-	/* ft_printf(" ttl: %d\n", fr->ip_ttl); */
 	ft_putendl("");
-	ping->pstat.rcv++;
 	return (1);
 }
 
@@ -81,11 +70,11 @@ int		ping_receive(int sockfd, t_ping *ping)
 	int			i;
 	char			buff[RECV_PACKET_SIZE] = { 0 };
 	struct			timeval tv_out = {
-		.tv_sec = ping->tstat.timeout,
+		.tv_sec = ping->env.timeout,
 	};
 
 	i = -1;
-	while (++i < TRC_MAX_TTL * TRC_QUERIES)
+	while (++i < ping->env.max_ttl * ping->env.max_tries)
 	{
 		FD_ZERO(&rdfds);
 		FD_SET(sockfd, &rdfds);

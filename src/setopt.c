@@ -13,53 +13,46 @@
 #include "ft_traceroute.h"
 
 /*
-** -t
+** -f first ttl
 */
 
 void	set_ttl(t_ping *ping, char *value)
 {
-	if (ft_atoi(value) > 255)
-		return ;
-	ping->tstat.ttl = ft_atoi(value);
+	ping->env.ttl = ft_atoi(value);
 }
 
 /*
-** -S
+** -m max ttl
 */
 
-void	set_sndbuff(t_ping *ping, char *value)
+void	set_max_ttl(t_ping *ping, char *value)
 {
-	ping->pstat.sndbuff = ft_atoi(value);
+	ping->env.max_ttl = ft_atoi(value);
 }
 
 /*
-** -s
+** -q tries number
 */
 
-void	set_packetsize(t_ping *ping, char *value)
+void	set_max_tries(t_ping *ping, char *value)
 {
-	ping->pstat.size = ft_atoi(value);
+	ping->env.max_tries= ft_atoi(value);
 }
 
 /*
-** -c
+** -t tos 
 */
 
-void	set_countmax(t_ping *ping, char *value)
+void	set_tos(t_ping *ping, char *value)
 {
-	if (ft_atoi(value) <= 0)
-	{
-		ft_putendl_fd(PING_BAD_COUNT, STDERR_FILENO);
-		return ;
-	}
-	ping->pstat.count_max = ft_atoi(value);
+	ping->env.tos = ft_atoi(value);
 }
 
 /*
-** -i
+** -w wait
 */
 
-void	set_intervale(t_ping *ping, char *value)
+void	set_timeout(t_ping *ping, char *value)
 {
-	ping->tstat.delay = atof(value);
+	ping->env.timeout = atof(value);
 }

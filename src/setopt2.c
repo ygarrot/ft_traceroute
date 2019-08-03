@@ -12,24 +12,6 @@
 
 #include "ft_traceroute.h"
 
-/*
-** -w
-*/
-
-void	set_deadline(t_ping *ping, char *value)
-{
-	ping->tstat.deadline = ft_atoi(value);
-}
-
-/*
-** -W
-*/
-
-void	set_timeout(t_ping *ping, char *value)
-{
-	ping->tstat.timeout = ft_atoi(value);
-}
-
 void	display_help(t_ping *ping, char *value)
 {
 	char *usage;
@@ -47,16 +29,14 @@ void	func_tab(t_ping *ping)
 	int		index;
 	void	(*f[16])(t_ping *p, char *);
 
-	f[ft_strlento(OPT_STR, 't')] = set_ttl;
-	f[ft_strlento(OPT_STR, 's')] = set_packetsize;
-	f[ft_strlento(OPT_STR, 'S')] = set_sndbuff;
-	f[ft_strlento(OPT_STR, 'c')] = set_countmax;
-	f[ft_strlento(OPT_STR, 'w')] = set_deadline;
-	f[ft_strlento(OPT_STR, 'W')] = set_timeout;
-	f[ft_strlento(OPT_STR, 'h')] = display_help;
-	f[(int)ft_sqrt(INTERVALE)] = set_intervale;
 	i = 1;
 	index = 0;
+	f[ft_strlento(OPT_STR, 'f')] = set_ttl;
+	f[ft_strlento(OPT_STR, 'm')] = set_max_ttl;
+	f[ft_strlento(OPT_STR, 'q')] = set_max_tries;
+	f[ft_strlento(OPT_STR, 't')] = set_tos;
+	f[ft_strlento(OPT_STR, 'w')] = set_timeout;
+	f[ft_strlento(OPT_STR, '?')] = display_help;
 	while (i < (1 << 30))
 	{
 		if (ping->opt & i && f[index] && ping->opt_tab[index])

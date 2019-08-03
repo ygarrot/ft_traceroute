@@ -14,7 +14,7 @@
 
 NAME = ft_traceroute
 
-FLAGS = -Wall -Werror -Wextra -MMD
+FLAGS = -Wall -Werror -Wextra
 FLAGS += -g3
 FLAGS += -Wunused
 # FLAGS += -fsanitize=address,undefined

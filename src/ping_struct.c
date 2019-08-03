@@ -12,16 +12,31 @@
 
 #include "ft_traceroute.h"
 
+void	free_routes(t_route *route, size_t ttl)
+{
+	while (ttl--)
+		free(route[ttl].tries);
+	free(route);
+}
+
 void	ping_ctor(t_ping *ping)
 {
+	int i;
+
+	i = -1;
 	ft_bzero(&ping->packet, sizeof(ping->packet));
-	ft_bzero(&ping->pstat, sizeof(t_packet_stat));
-	ft_bzero(&ping->tstat, sizeof(t_time_stat));
-	ping->pstat.size = PACKET_SIZE_DEFAULT;
-	ping->tstat.ttl = TTL_DEFAULT;
-	ping->tstat.timeout = DEFAULT_TIMEOUT;
-	ping->tstat.delay = DEFAULT_DELAY;
-	ping->tstat.deadline = -1.0;
+
+	ping->env.max_ttl = MAX_TTL; 
+	ping->env.max_tries = MAX_TRIES;
+	if (!(ping->route = (struct route*)malloc(sizeof(struct route) * ping->env.max_ttl)))
+		ft_exit("malloc failed", EXIT_FAILURE);
+	while (++i < ping->env.max_ttl)
+	{
+		if (!(ping->route[i].tries = (struct timeval*)malloc(sizeof(struct timeval) * ping->env.max_tries)))
+		{
+			free_routes(ping->route, ping->env.max_ttl);
+			ft_exit("malloc failed", EXIT_FAILURE);
+		}
+	}
 	func_tab(ping);
-	ping->pstat.size -= sizeof(t_icmphdr);
 }

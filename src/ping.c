@@ -26,9 +26,15 @@ int		ping_send(int socket, t_ping *ping)
 	return (1);
 }
 
+suseconds_t			get_time(struct timeval curr_time)
+{
+	return (curr_time.tv_sec * 1000000 + curr_time.tv_usec);
+}
+
+
 int		recv_ping(t_ping *ping, char *buff, int sockfd)
 {
-	static int 		first_ttl = - 1;
+	static int 		first_ttl = -1;
 	struct sockaddr_in	from;
 	socklen_t		from_len;
 	struct icmphdr		*icmph;
@@ -36,12 +42,13 @@ int		recv_ping(t_ping *ping, char *buff, int sockfd)
 
 	int ttl;
 	int icmp_type;
-	(void)ping;
-
+	gettimeofday(&ping->env.time, 0);
+	if (first_ttl == -1)
+		first_ttl = ping->env.max_ttl;
 	from_len = sizeof(struct sockaddr_in);
 	if (recvfrom(sockfd, buff, RECV_PACKET_SIZE, 0, (struct sockaddr*)&from, &from_len) == ERROR_CODE)
 	{
-		ft_printf("Packet receive failed!\n");
+		printf("Packet receive failed!\n");
 		return (ERROR_CODE);
 	}
 	icmph = (struct icmphdr*)(buff + sizeof(struct ip));
@@ -55,12 +62,15 @@ int		recv_ping(t_ping *ping, char *buff, int sockfd)
 		if (ttl < first_ttl)
 			first_ttl = ttl;
 	}
+	/* ft_printf("%d\n", */ 
+	/* ping->route[ntohs(icmph->un.echo.id)].done); */
 	if (ttl > first_ttl)
 		return(1);
-	ft_printf("[%s] -> ", inet_ntoa(fr->ip_src));
-	ft_printf(" ttl: %d", ntohs(icmph->un.echo.id));
-	ft_printf(" sequence: %d", ntohs(icmph->un.echo.sequence));
-	ft_putendl("");
+	ping->route[ntohs(icmph->un.echo.id)].tries[ntohs(icmph->un.echo.sequence)].tv_sec -= ping->env.time.tv_sec;
+	ping->route[ntohs(icmph->un.echo.id)].tries[ntohs(icmph->un.echo.sequence)].tv_usec -= ping->env.time.tv_usec;
+	ping->route[ttl].done++;
+	ping->route[ttl].addr = ft_strdup(inet_ntoa(fr->ip_src)); 
+	(void)fr;
 	return (1);
 }
 
@@ -71,6 +81,7 @@ int		ping_receive(int sockfd, t_ping *ping)
 	char			buff[RECV_PACKET_SIZE] = { 0 };
 	struct			timeval tv_out = {
 		.tv_sec = ping->env.timeout,
+		.tv_usec = 0
 	};
 
 	i = -1;
@@ -83,6 +94,7 @@ int		ping_receive(int sockfd, t_ping *ping)
 		if (FD_ISSET(sockfd, &rdfds))
 		{
 			recv_ping(ping, buff, sockfd);
+			print_foreach(ping);
 		}
 	}
 	return (1);

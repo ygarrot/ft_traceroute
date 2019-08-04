@@ -21,21 +21,22 @@ int	print_summary(t_ping *ping)
 	return (1);
 }
 
-int	print_foreach(t_ping *ping, int *ttls)
+int	print_foreach(t_ping *ping)
 {
-	static int current_ttl = 0;
+	static int current_ttl = 1;
 	int		i;
 
 		
-	i = -1;
-	while (ttls[current_ttl] == 3)
+	while (ping->route[current_ttl].done == 3 && ping->route[current_ttl].addr)
 	{
 		printf("%d %s", current_ttl, ping->route[current_ttl].addr);
+		i = -1;
 		while (++i < ping->env.max_tries)
 		{
-			;
-			/* printf("%dms", ping->route[current_ttl].tries[i]); */
+			printf(" %.3fms", timeval_to_double(ping->route[current_ttl].tries[i]));
 		}
+		++current_ttl;
+		printf("\n");
 	}
 	return (1);
 }

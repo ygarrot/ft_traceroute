@@ -44,7 +44,6 @@
 # define SOCKET_ERROR "socket error"
 # define PACKET_SIZE_DEFAULT 64
 # define DEFAULT_TIMEOUT 3
-# define DEFAULT_DELAY 1.0
 # define TTL_DEFAULT 64
 # define ERROR_CODE -1
 # define PORT_TMP 12
@@ -92,6 +91,7 @@ typedef struct route
 {
 	t_timeval		*tries;
 	char			*addr;
+	int			done;
 }		t_route;
 
 typedef struct option
@@ -104,6 +104,7 @@ typedef struct option
 
 	int	tos;
 	float	timeout;
+	t_timeval		time;
 }		t_option;
 
 typedef struct	s_ping
@@ -125,9 +126,10 @@ typedef struct	s_ping
 	int			port;
 }				t_ping;
 
+int	print_foreach(t_ping *ping);
 unsigned short		checksum(void *b, int len);
 unsigned short in_cksum(unsigned short *addr, int len);
-double			timeval_to_double(t_timeval last_time, t_timeval current_time);
+double			timeval_to_double(t_timeval last_time);
 double			intervale(void);
 
 void			stop_loop(int signal);

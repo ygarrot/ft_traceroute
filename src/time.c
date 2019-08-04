@@ -26,12 +26,11 @@
 ** Thus, the following is purely of historic interest.
 */
 
-double	timeval_to_double(t_timeval last_time, t_timeval current_time)
+double	timeval_to_double(t_timeval current_time)
 {
 	double intervale;
 
-	intervale = (double)(current_time.tv_sec - last_time.tv_sec) * 1000.0;
-	intervale += (double)(current_time.tv_usec - last_time.tv_usec)
-		/ 1000.0;
-	return (intervale);
+	intervale = (double)(current_time.tv_sec) * 1000.0;
+	intervale += (double)(current_time.tv_usec) / 1000.0;
+	return (-intervale);
 }

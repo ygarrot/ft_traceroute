@@ -31,9 +31,10 @@ void	ft_ping(t_ping *ping)
 		ping->env.tries = -1;
 		while (++ping->env.tries < ping->env.max_tries)
 		{
-			gettimeofday(&ping->route[ping->env.ttl].tries[ping->env.tries], 0);
 			set_packet(ping);
 			ping_send(ping->socket, ping);
+			if (gettimeofday(&ping->route[ping->env.ttl].tries[ping->env.tries], 0) == ERROR_CODE)
+				printf("gettime of day error\n");
 		}
 	}
 	ping_receive(ping->socket, ping);

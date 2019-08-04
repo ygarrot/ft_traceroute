@@ -28,6 +28,7 @@ void	ping_ctor(t_ping *ping)
 
 	ping->env.max_ttl = MAX_TTL; 
 	ping->env.max_tries = MAX_TRIES;
+	ping->env.timeout = DEFAULT_TIMEOUT;
 	if (!(ping->route = (struct route*)malloc(sizeof(struct route) * ping->env.max_ttl)))
 		ft_exit("malloc failed", EXIT_FAILURE);
 	while (++i < ping->env.max_ttl)

@@ -21,16 +21,6 @@ int	print_summary(t_ping *ping)
 	return (1);
 }
 
-double	res(t_timeval last_time, t_timeval current_time)
-{
-	double intervale;
-
-	intervale = (double)(current_time.tv_sec - last_time.tv_sec) * 1000.0;
-	intervale += (double)(current_time.tv_usec - last_time.tv_usec)
-		/ 1000.0;
-	return (intervale);
-}
-
 int	print_foreach(t_ping *ping)
 {
 	static int	current_ttl = 1;
@@ -50,20 +40,17 @@ int	print_foreach(t_ping *ping)
 	if (current_try == 0)
 		printf("%3d   %s", current_ttl, ping->timedout ? ping->route[current_ttl].addr : "");
 	if (ping->route[current_ttl].done[current_try])
-		printf(" %.3fms", timeval_to_double(ping->route[current_ttl].tries[current_try]));
+		printf("  %.3fms", timeval_to_double(ping->route[current_ttl].tries[current_try]));
 	else
-	{
 		printf(" *");
-	}
 	fflush(0);
-	++current_try;
-	if (current_try == ping->env.max_tries)
+	if (++current_try >= ping->env.max_tries)
 	{
-		ping->done = current_ttl == ping->last_ttl;
+		ping->done = current_ttl == ping->last_ttl
+		       		|| current_ttl == 255;
 		printf("\n");
 		++current_ttl;
 		current_try = 0;
 	}
-	/* return (1); */
 	return (print_foreach(ping));
 }

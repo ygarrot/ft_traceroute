@@ -1,0 +1,12 @@
+Usage: traceroute [OPTION...] HOST
+Print the route packets trace to network host.
+
+  -f,     set initial hop distance, i.e., time-to-live
+  -m,     set maximal hop count (default: 64)
+  -p,     use destination PORT port (default: 33434)
+  -q,     send NUM probe packets per hop (default: 3)
+          resolve hostnames
+  -t,     set type of service (TOS) to NUM
+  -w,     wait NUM seconds for response (default: 3)
+  -?,     give this help list
+          give a short usage message

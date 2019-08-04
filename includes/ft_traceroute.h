@@ -34,7 +34,7 @@
 # define TTL_DEFAULT 64
 # define ERROR_CODE -1
 # define PORT_TMP 12
-# define OPT_STR "cdinqsStTvwWh"
+# define OPT_STR "fmqtw?"
 
 # define RECV_PACKET_SIZE (sizeof(struct ip) * 2 + sizeof(struct icmphdr) * 2)
 # define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr))
@@ -42,19 +42,12 @@
 #define MAX_TRIES 3
 
 enum {
-	COUNT = (1 << 0),
-	DEBUG = (1 << 1),
-	INTERVALE = (1 << 2),
-	NUMERIC = (1 << 3),
-	QUIET = (1 << 4),
-	PACKET_SIZE = (1 << 5),
-	SNDBUFF = (1 << 6),
-	TTL = (1 << 7),
-	TIMESTAMP = (1 << 8),
-	VERBOSE = (1 << 9),
-	DEADLINE = (1 << 10),
-	TIMEOUT = (1 << 11),
-	HELP = (1 << 12)
+	FIRS_TTL = (1 << 0),
+	MAX_TTL_OPT = (1 << 1),
+	MAX_TRIES_OPT = (1 << 2),
+	TOS = (1 << 3),
+	TIMEOUT = (1 << 4),
+	HELP = (1 << 5)
 };
 
 typedef struct timeval		t_timeval;

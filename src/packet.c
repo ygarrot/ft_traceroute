@@ -18,7 +18,7 @@ int	set_ip_struct(t_ping *ping)
 
 	iph->ip_hl = 5;
 	iph->ip_v = 4;
-	iph->ip_tos = 0;
+	iph->ip_tos = ping->env.tos;
 	iph->ip_len = SENT_PACKET_SIZE;
 	iph->ip_id = htons(getpid() & 0xff);
 	iph->ip_id = htons(0);

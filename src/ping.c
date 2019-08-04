@@ -43,8 +43,10 @@ int		set_data(t_ping *ping, char *buff, struct icmphdr *icmph)
 		icmph = (struct icmphdr*)(buff + 2 * sizeof(struct ip) + sizeof(struct icmphdr));
 	ttl = ntohs(icmph->un.echo.id);
 	seq = ntohs(icmph->un.echo.sequence);
-	if (ping->last_ttl == -1 && ip->ip_src.s_addr == ping->des)
+	if (ip->ip_src.s_addr == ping->des)
+	{
 		ping->last_ttl = ttl;
+	}
 	if (!ping->route[ttl].addr) 
 		ping->route[ttl].addr = ft_strdup(inet_ntoa(ip->ip_src)); 
 	if (ttl > ping->env.max_ttl || ttl < 0 
@@ -77,8 +79,7 @@ int		ping_receive(int sockfd, t_ping *ping)
 {
 	fd_set			rdfds;
 	struct		timeval tv_out = {
-		/* .tv_sec = ping->env.timeout, */
-		.tv_sec = 3,
+		.tv_sec = ping->env.timeout,
 		.tv_usec = 0
 	};
 
@@ -92,6 +93,6 @@ int		ping_receive(int sockfd, t_ping *ping)
 	if (!FD_ISSET(sockfd, &rdfds))
 		return (1);
 	recv_ping(ping, sockfd);
-	/* print_foreach(ping); */
+	print_foreach(ping);
 	return (1);
 }

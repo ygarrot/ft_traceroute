@@ -14,12 +14,22 @@
 
 void	display_help(t_ping *ping, char *value)
 {
-	char *usage;
+	const char *usage = "Usage: traceroute [OPTION...] HOST\n\
+Print the route packets trace to network host.\n\
+\n\
+  -f,     set initial hop distance, i.e., time-to-live\n\
+  -m,     set maximal hop count (default: 64)\n\
+  -p,     use destination PORT port (default: 33434)\n\
+  -q,     send NUM probe packets per hop (default: 3)\n\
+          resolve hostnames\n\
+  -t,     set type of service (TOS) to NUM\n\
+  -w,     wait NUM seconds for response (default: 3)\n\
+  -?,     give this help list\n\
+          give a short usage message\n\
+	  ";
 
 	(void)ping;
 	(void)value;
-	usage = "Usage: ping [-cqditdw] [-c count]"
-	" [-i interval] [-t ttl] [-w deadline] destination";
 	printf("%s\n", usage);
 }
 

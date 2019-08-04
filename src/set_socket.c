@@ -38,7 +38,7 @@ int		reverse_dns_lookup(t_ping *ping)
 				service, sizeof(service), NI_NAMEREQD))
 	{
 		printf("connect: Invalid argument\n");
-		return (ERROR_CODE);
+		/* return (ERROR_CODE); */
 	}
 	return (1);
 }

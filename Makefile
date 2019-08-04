@@ -17,7 +17,7 @@ NAME = ft_traceroute
 FLAGS = -Wall -Werror -Wextra
 FLAGS += -g3
 FLAGS += -Wunused
-FLAGS += -fsanitize=address,undefined
+# FLAGS += -fsanitize=address,undefined
 SRC_DIR = src
 
 INCLUDE =  includes/
@@ -68,7 +68,7 @@ fclean: clean
 	@make -C libft fclean
 
 exec: $(NAME)
-	./$(NAME) www.google.com
+	./$(NAME) google.com
 
 re: fclean all
 PHONY: $(NAME) all clean fclean re

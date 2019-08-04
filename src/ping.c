@@ -23,7 +23,7 @@ int		ping_send(int socket, t_ping *ping)
 				sizeof(struct sockaddr_in)
 		  ) <= 0)
 	{
-		ft_exit("connect: invalid argument", EXIT_FAILURE);
+		/* ft_exit("connect: invalid argument", EXIT_FAILURE); */
 	}
 	return (1);
 }
@@ -37,19 +37,22 @@ int		set_data(t_ping *ping, char *buff, struct icmphdr *icmph)
 	ip = (struct ip*)buff;
 	if (icmph->type == 0
 	&& (ping->des != ip->ip_src.s_addr || (ping->last_ttl != -1
-	&& ping->route[ping->last_ttl].done >= ping->env.max_tries)))
+	&& ping->route[ping->last_ttl].done[ping->env.max_tries - 1])))
 		return (1);
 	if (icmph->type != 0)
-		icmph = (struct icmphdr*)(buff + 2 * IP_HDR_SIZE + ICMP_HDR_SIZE);
+		icmph = (struct icmphdr*)(buff + 2 * sizeof(struct ip) + sizeof(struct icmphdr));
 	ttl = ntohs(icmph->un.echo.id);
 	seq = ntohs(icmph->un.echo.sequence);
 	if (ping->last_ttl == -1 && ip->ip_src.s_addr == ping->des)
 		ping->last_ttl = ttl;
 	if (!ping->route[ttl].addr) 
 		ping->route[ttl].addr = ft_strdup(inet_ntoa(ip->ip_src)); 
+	if (ttl > ping->env.max_ttl || ttl < 0 
+	|| seq > ping->env.max_tries || seq < 0)
+		return (1);
+	ping->route[ttl].done[seq] = 1;
 	ping->route[ttl].tries[seq].tv_sec -= ping->env.time.tv_sec;
 	ping->route[ttl].tries[seq].tv_usec -= ping->env.time.tv_usec;
-	ping->route[ttl].done++;
 	return (1);
 }
 
@@ -70,23 +73,25 @@ int		recv_ping(t_ping *ping, int sockfd)
 	return (1);
 }
 
-int		ping_receive(int sockfd, t_ping *ping, int i)
+int		ping_receive(int sockfd, t_ping *ping)
 {
 	fd_set			rdfds;
 	struct		timeval tv_out = {
-		.tv_sec = ping->env.timeout,
+		/* .tv_sec = ping->env.timeout, */
+		.tv_sec = 3,
 		.tv_usec = 0
 	};
 
-	if (ping->done || i >= ping->env.max_ttl * ping->env.max_tries)
-		return (1);
+	if (ping->done)
+		return (2);
 	FD_ZERO(&rdfds);
 	FD_SET(sockfd, &rdfds);
-	if (select(sockfd + 1, &rdfds, NULL, NULL, &tv_out) == ERROR_CODE)
+	ping->timedout = 1;
+	if ((ping->timedout = select(sockfd + 1, &rdfds, NULL, NULL, &tv_out)) == ERROR_CODE)
 		ft_exit("select failed\n", EXIT_FAILURE);
 	if (!FD_ISSET(sockfd, &rdfds))
-		return (ping_receive(sockfd, ping, ++i));
+		return (1);
 	recv_ping(ping, sockfd);
-	print_foreach(ping);
-	return (ping_receive(sockfd, ping, ++i));
+	/* print_foreach(ping); */
+	return (1);
 }

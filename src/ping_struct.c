@@ -31,6 +31,8 @@ void set_routes(t_ping *ping, int i)
 		free_routes(ping->route, ping->env.max_ttl);
 		ft_exit("malloc failed", EXIT_FAILURE);
 	}
+	if (!(ping->route[i].done = (bool*)ft_memalloc(sizeof(bool) * ping->env.max_tries)))
+		ft_exit("malloc failed", EXIT_FAILURE);
 	set_routes(ping, ++i);
 }
 

@@ -17,7 +17,7 @@ NAME = ft_traceroute
 FLAGS = -Wall -Werror -Wextra
 FLAGS += -g3
 FLAGS += -Wunused
-# FLAGS += -fsanitize=address,undefined
+FLAGS += -fsanitize=address,undefined
 SRC_DIR = src
 
 INCLUDE =  includes/

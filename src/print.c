@@ -23,7 +23,7 @@ int	print_summary(t_ping *ping)
 
 int	print_foreach(t_ping *ping)
 {
-	static int	current_ttl = 1;
+	int	current_ttl = ping->env.first_ttl;
 	static int	current_try = 0;
 
 	if (ping->env.ttl < current_ttl
@@ -43,13 +43,12 @@ int	print_foreach(t_ping *ping)
 		printf("  %.3fms", timeval_to_double(ping->route[current_ttl].tries[current_try]));
 	else
 		printf(" *");
-	fflush(0);
 	if (++current_try >= ping->env.max_tries)
 	{
 		ping->done = current_ttl == ping->last_ttl
 		       		|| current_ttl == 255;
 		printf("\n");
-		++current_ttl;
+		++ping->env.first_ttl;
 		current_try = 0;
 	}
 	return (print_foreach(ping));

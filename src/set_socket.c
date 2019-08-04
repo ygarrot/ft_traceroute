@@ -20,27 +20,10 @@ int		set_socket(int is_ipv4)
 	(void)is_ipv4;
 	t = 1;
 	if ((sock = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) == ERROR_CODE)
-	{
-		perror("socket");
 		ft_exit(SOCKET_ERROR, EXIT_FAILURE);
-	}
 	if (setsockopt (sock, IPPROTO_IP, IP_HDRINCL, &t, sizeof (t)) == ERROR_CODE)
 		printf ("Cannot set HDRINCL!\n");
 	return (sock);
-}
-
-int		reverse_dns_lookup(t_ping *ping)
-{
-	char	service[1024] = { 0 };
-
-	if (getnameinfo(ping->host_entity->ai_addr,
-		ping->host_entity->ai_addrlen, ping->dns_addr, NI_MAXHOST,
-				service, sizeof(service), NI_NAMEREQD))
-	{
-		printf("connect: Invalid argument\n");
-		/* return (ERROR_CODE); */
-	}
-	return (1);
 }
 
 int		create_socket(t_ping *ping, int is_ipv4)
@@ -70,7 +53,6 @@ int		create_socket(t_ping *ping, int is_ipv4)
 
 int		check_addr(t_ping *ping)
 {
-	void		*ptr;
 	int		is_ipv4;
 	t_addrinfo	tmp = (t_addrinfo){
 		.ai_family = AF_INET,
@@ -84,15 +66,8 @@ int		check_addr(t_ping *ping)
 		printf("ping: Name or Service not known\n");
 		return (ERROR_CODE);
 	}
-	ptr = &((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr;
 	is_ipv4 = ping->host_entity->ai_family == AF_INET;
-	inet_ntop(ping->host_entity->ai_family, ptr,
-			ping->host_addr, 100);
+	ping->host_addr = inet_ntoa(((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr);
 	ping->des = ((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr.s_addr;
-	if (reverse_dns_lookup(ping) == ERROR_CODE)
-	{
-		ft_printf("reverse dns lookup\n");
-		return (ERROR_CODE);
-	}
 	return (create_socket(ping, is_ipv4));
 }

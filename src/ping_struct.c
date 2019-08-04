@@ -17,6 +17,7 @@ void	free_routes(t_route *route, int ttl)
 	while (--ttl > -1)
 	{
 		ft_memdel((void**)&route[ttl].tries);
+		free(route[ttl].done);
 		ft_strdel(&route[ttl].addr);
 	}
 	free(route);
@@ -38,16 +39,15 @@ void set_routes(t_ping *ping, int i)
 
 void	ping_ctor(t_ping *ping)
 {
-	ft_bzero(&ping->packet, sizeof(ping->packet));
 	ping->env.max_ttl = MAX_TTL; 
 	ping->env.max_tries = MAX_TRIES;
 	ping->env.timeout = DEFAULT_TIMEOUT;
 	ping->env.ttl = 1;
 	ping->env.tries = -1;
 	ping->last_ttl = -1;
+	func_tab(ping);
+	ping->env.first_ttl = ping->env.ttl;
 	if (!(ping->route = (struct route*)ft_memalloc(sizeof(struct route) * ping->env.max_ttl)))
 		ft_exit("malloc failed", EXIT_FAILURE);
 	set_routes(ping, 0);
-	func_tab(ping);
-	printf("tos %d\n", ping->env.tos);
 }

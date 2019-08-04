@@ -73,6 +73,7 @@ typedef struct route
 
 typedef struct option
 {
+	int	first_ttl;
 	int	ttl;
 	int	max_ttl;
 
@@ -95,7 +96,7 @@ typedef struct	s_ping
 	char			packet[SENT_PACKET_SIZE];
 	char			*opt_tab[HELP + 1];
 	int			opt;
-	char			host_addr[100];
+	char			*host_addr;
 	char			dns_addr[NI_MAXHOST];
 	char			*host_name;
 	int			socket;

@@ -17,32 +17,19 @@
 
 # include <stdio.h>
 # include <netdb.h>
-# include <sys/socket.h>
-# include <sys/types.h>
-
-# include <sys/uio.h>
-
-# include <signal.h>
-
-# include <unistd.h>
-
-# include <sys/mman.h>
-
-# include <sys/time.h>
-# include <netinet/in.h>
 # include <arpa/inet.h>
-# include <sys/socket.h>
-# include <netdb.h>
+
 # include <netinet/ip.h>
+# include <netinet/in.h>
 # include <netinet/ip_icmp.h>
 
-# include <stdbool.h>
+# include <sys/uio.h>
 # include <sys/socket.h>
-# include <sys/types.h>
+# include <sys/mman.h>
+# include <sys/time.h>
 
 # define PING_BAD_COUNT "ping: bad number of packets to transmit."
 # define SOCKET_ERROR "socket error"
-# define PACKET_SIZE_DEFAULT 64
 # define DEFAULT_TIMEOUT 3
 # define TTL_DEFAULT 64
 # define ERROR_CODE -1
@@ -55,7 +42,6 @@
 # define SENT_PACKET_SIZE (sizeof(struct ip) + sizeof(struct icmphdr))
 #define MAX_TTL 30
 #define MAX_TRIES 3
-/* # define FT_PACKET_SIZE sizeof(struct ip) + sizeof(struct icmphdr) */
 
 enum {
 	COUNT = (1 << 0),
@@ -114,7 +100,7 @@ typedef struct	s_ping
 	t_route			*route;
 	t_option		env;
 
-	int32_t			des;
+	in_addr_t			des;
 	char			packet[SENT_PACKET_SIZE];
 	char			*opt_tab[HELP + 1];
 	int			opt;
@@ -124,37 +110,42 @@ typedef struct	s_ping
 	int			socket;
 	int			sockaddr_len;
 	int			port;
+	int			last_ttl;
+	bool			done;
 }				t_ping;
 
-int	print_foreach(t_ping *ping);
-unsigned short		checksum(void *b, int len);
-unsigned short in_cksum(unsigned short *addr, int len);
-double			timeval_to_double(t_timeval last_time);
-double			intervale(void);
+int				print_foreach(t_ping *ping);
+unsigned short			in_cksum(unsigned short *addr, int len);
+double				timeval_to_double(t_timeval last_time);
+double				intervale(void);
 
-void			stop_loop(int signal);
-void			ping_ctor(t_ping *ping);
-void			ping_dtor(t_ping *ping);
-void			func_tab(t_ping *ping);
+void				stop_loop(int signal);
+void				ping_ctor(t_ping *ping);
+void				ping_dtor(t_ping *ping);
+void				func_tab(t_ping *ping);
 
-void			set_ttl(t_ping *ping, char *value);
-void			set_max_ttl(t_ping *ping, char *value);
-void			set_max_tries(t_ping *ping, char *value);
-void			set_tos(t_ping *ping, char *value);
-void			set_timeout(t_ping *ping, char *value);
-void			display_help(t_ping *ping, char *value);
+/*
+**   option
+*/
+
+void				set_ttl(t_ping *ping, char *value);
+void				set_max_ttl(t_ping *ping, char *value);
+void				set_max_tries(t_ping *ping, char *value);
+void				set_tos(t_ping *ping, char *value);
+void				set_timeout(t_ping *ping, char *value);
+void				display_help(t_ping *ping, char *value);
 
 int				print_ping(t_ping *ping);
 int				print_stat(t_ping *ping);
 int				ping_send(int socket, t_ping *ping);
 int				set_packet(t_ping *ping);
 int				set_socket(int is_ipv4);
-int				ping_receive(int sockfd, t_ping *ping);
+int				ping_receive(int sockfd, t_ping *ping, int i);
 int				ping_loop(t_ping *ping);
 int				check_addr(t_ping *ping);
 int				print_summary(t_ping *ping);
 int				reverse_dns_lookup(t_ping *ping);
-
+void	free_routes(t_route *route, int ttl);
 
 extern t_ping *g_ping;
 #endif

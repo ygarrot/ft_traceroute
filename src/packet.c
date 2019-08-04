@@ -47,7 +47,6 @@ int	set_icmp_struct(t_ping *ping)
 
 int	set_packet(t_ping *ping)
 {
-	ft_bzero(ping->packet, sizeof(ping->packet));
 	set_ip_struct(ping);
 	set_icmp_struct(ping);
 	return (1);

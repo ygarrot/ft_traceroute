@@ -32,7 +32,6 @@ SRC =\
 	 print.c\
 	 packet.c\
 	 checksum.c\
-	 ip_version.c\
 	 main.c\
 	 ping.c\
 	 set_socket.c\

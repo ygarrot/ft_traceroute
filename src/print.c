@@ -14,7 +14,7 @@
 
 int	print_summary(t_ping *ping)
 {
-	printf("traceroute to %s (%s), %d max hope %ld bytes packets\n",
+	printf("traceroute to %s (%s), %d hops max, %ld bytes packets\n",
 			ping->host_entity->ai_canonname, ping->host_addr,
 			ping->env.max_ttl,
 			sizeof(ping->packet));
@@ -23,20 +23,20 @@ int	print_summary(t_ping *ping)
 
 int	print_foreach(t_ping *ping)
 {
-	static int current_ttl = 1;
+	static int	current_ttl = 1;
 	int		i;
 
-		
-	while (ping->route[current_ttl].done == 3 && ping->route[current_ttl].addr)
-	{
-		printf("%d %s", current_ttl, ping->route[current_ttl].addr);
-		i = -1;
-		while (++i < ping->env.max_tries)
-		{
-			printf(" %.3fms", timeval_to_double(ping->route[current_ttl].tries[i]));
-		}
-		++current_ttl;
-		printf("\n");
-	}
-	return (1);
+
+	if (!ping->route[current_ttl].addr || ping->route[current_ttl].done != 3)
+		return (1);
+	if (current_ttl == ping->last_ttl)
+		ping->done = 1;
+	i = -1;
+	printf("%3d %s", current_ttl, ping->route[current_ttl].addr);
+	ft_strdel(&ping->route[current_ttl].addr);
+	while (++i < ping->env.max_tries)
+		printf(" %.3fms", timeval_to_double(ping->route[current_ttl].tries[i]));
+	printf("\n");
+	++current_ttl;
+	return(print_foreach(ping));
 }

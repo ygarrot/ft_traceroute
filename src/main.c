@@ -19,25 +19,25 @@ int		usage(int ac, char **av)
 	(void)av;
 	if (ac >= 2)
 		return (0);
-	ft_printf("Please give me an address and (maybe) a port\n");
+	ft_printf("traceroute: missing host operand\n\
+Try 'traceroute --help' or 'traceroute --usage' for more information. \n");
 	return (1);
 }
 
 void	ft_ping(t_ping *ping)
 {
-	ping->env.ttl = 0;
-	while (++ping->env.ttl < ping->env.max_ttl)
+	if (++ping->env.tries >= ping->env.max_tries)
 	{
-		ping->env.tries = -1;
-		while (++ping->env.tries < ping->env.max_tries)
-		{
-			set_packet(ping);
-			ping_send(ping->socket, ping);
-			if (gettimeofday(&ping->route[ping->env.ttl].tries[ping->env.tries], 0) == ERROR_CODE)
-				printf("gettime of day error\n");
-		}
-	}
-	ping_receive(ping->socket, ping);
+		ping->env.tries = 0;
+		++ping->env.ttl;
+       	}
+	if (ping->env.ttl >= ping->env.max_ttl)
+		return ;
+	set_packet(ping);
+	ping_send(ping->socket, ping);
+	if (gettimeofday(&ping->route[ping->env.ttl].tries[ping->env.tries], 0) == ERROR_CODE)
+		printf("gettime of day error\n");
+	ft_ping(ping);
 }
 
 int		main(int ac, char **av)
@@ -55,8 +55,12 @@ int		main(int ac, char **av)
 	}
 	ping_ctor(&ping);
 	ping.host_name = av[1];
+	ping.env.ttl = 1;
+	ping.env.tries = -1;
 	if ((ping.socket = check_addr(&ping)) == ERROR_CODE)
 		ft_exit("check addr", EXIT_FAILURE);
 	print_summary(&ping);
 	ft_ping(&ping);
+	ping_receive(ping.socket, &ping, 0);
+	free_routes(ping.route, ping.env.max_ttl);
 }

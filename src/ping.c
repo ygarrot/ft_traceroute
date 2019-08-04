@@ -14,88 +14,78 @@
 
 int		ping_send(int socket, t_ping *ping)
 {
-	if (sendto(socket, ping->packet,
-			SENT_PACKET_SIZE,
+	if (sendto(
+				socket,
+				ping->packet,
+				SENT_PACKET_SIZE,
 				0,
 				(struct sockaddr*)ping->sockaddr,
-				sizeof(struct sockaddr_in)) <= 0)
+				sizeof(struct sockaddr_in)
+		  ) <= 0)
 	{
 		ft_exit("connect: invalid argument", EXIT_FAILURE);
-		return (ERROR_CODE);
 	}
 	return (1);
 }
 
-suseconds_t			get_time(struct timeval curr_time)
+int		set_data(t_ping *ping, char *buff, struct icmphdr *icmph)
 {
-	return (curr_time.tv_sec * 1000000 + curr_time.tv_usec);
+	int			seq;
+	struct 			ip *ip;
+	int			ttl;
+
+	ip = (struct ip*)buff;
+	if (icmph->type == 0
+	&& (ping->des != ip->ip_src.s_addr || (ping->last_ttl != -1
+	&& ping->route[ping->last_ttl].done >= ping->env.max_tries)))
+		return (1);
+	if (icmph->type != 0)
+		icmph = (struct icmphdr*)(buff + 2 * IP_HDR_SIZE + ICMP_HDR_SIZE);
+	ttl = ntohs(icmph->un.echo.id);
+	seq = ntohs(icmph->un.echo.sequence);
+	if (ping->last_ttl == -1 && ip->ip_src.s_addr == ping->des)
+		ping->last_ttl = ttl;
+	ping->route[ttl].addr = ft_strdup(inet_ntoa(ip->ip_src)); 
+	ping->route[ttl].tries[seq].tv_sec -= ping->env.time.tv_sec;
+	ping->route[ttl].tries[seq].tv_usec -= ping->env.time.tv_usec;
+	ping->route[ttl].done++;
+	return (1);
 }
 
-
-int		recv_ping(t_ping *ping, char *buff, int sockfd)
+int		recv_ping(t_ping *ping, int sockfd)
 {
-	static int 		first_ttl = -1;
-	struct sockaddr_in	from;
+	struct sockaddr		from;
+	char			buff[RECV_PACKET_SIZE] = { 0 };
 	socklen_t		from_len;
-	struct icmphdr		*icmph;
-	struct ip		*fr;
 
-	int ttl;
-	int icmp_type;
 	gettimeofday(&ping->env.time, 0);
-	if (first_ttl == -1)
-		first_ttl = ping->env.max_ttl;
-	from_len = sizeof(struct sockaddr_in);
-	if (recvfrom(sockfd, buff, RECV_PACKET_SIZE, 0, (struct sockaddr*)&from, &from_len) == ERROR_CODE)
+	from_len = sizeof(struct sockaddr);
+	if (recvfrom(sockfd, buff, RECV_PACKET_SIZE, 0, &from, &from_len) == ERROR_CODE)
 	{
 		printf("Packet receive failed!\n");
 		return (ERROR_CODE);
 	}
-	icmph = (struct icmphdr*)(buff + sizeof(struct ip));
-	icmp_type = icmph->type;
-	if (icmp_type == ICMP_TIME_EXCEEDED)
-		icmph = (struct icmphdr*)(buff + 2 * IP_HDR_SIZE + ICMP_HDR_SIZE);
-	ttl = ntohs(icmph->un.echo.id);
-	fr = (struct ip*)buff;
-	if (icmp_type == ICMP_ECHOREPLY)
-	{
-		if (ttl < first_ttl)
-			first_ttl = ttl;
-	}
-	/* ft_printf("%d\n", */ 
-	/* ping->route[ntohs(icmph->un.echo.id)].done); */
-	if (ttl > first_ttl)
-		return(1);
-	ping->route[ntohs(icmph->un.echo.id)].tries[ntohs(icmph->un.echo.sequence)].tv_sec -= ping->env.time.tv_sec;
-	ping->route[ntohs(icmph->un.echo.id)].tries[ntohs(icmph->un.echo.sequence)].tv_usec -= ping->env.time.tv_usec;
-	ping->route[ttl].done++;
-	ping->route[ttl].addr = ft_strdup(inet_ntoa(fr->ip_src)); 
-	(void)fr;
+	set_data(ping, buff, (struct icmphdr*)(buff + sizeof(struct ip)));
 	return (1);
 }
 
-int		ping_receive(int sockfd, t_ping *ping)
+int		ping_receive(int sockfd, t_ping *ping, int i)
 {
 	fd_set			rdfds;
-	int			i;
-	char			buff[RECV_PACKET_SIZE] = { 0 };
-	struct			timeval tv_out = {
+	struct		timeval tv_out = {
 		.tv_sec = ping->env.timeout,
 		.tv_usec = 0
 	};
 
-	i = -1;
-	while (++i < ping->env.max_ttl * ping->env.max_tries)
-	{
-		FD_ZERO(&rdfds);
-		FD_SET(sockfd, &rdfds);
-		if (select(sockfd + 1, &rdfds, NULL, NULL, &tv_out) == ERROR_CODE)
-			ft_exit("select failed\n", EXIT_FAILURE);
-		if (FD_ISSET(sockfd, &rdfds))
-		{
-			recv_ping(ping, buff, sockfd);
-			print_foreach(ping);
-		}
-	}
-	return (1);
+	if (ping->done || i >= ping->env.max_ttl * ping->env.max_tries)
+		return (1);
+	FD_ZERO(&rdfds);
+	FD_SET(sockfd, &rdfds);
+	if (select(sockfd + 1, &rdfds, NULL, NULL, &tv_out) == ERROR_CODE)
+		ft_exit("select failed\n", EXIT_FAILURE);
+	if (!FD_ISSET(sockfd, &rdfds))
+		return (ping_receive(sockfd, ping, ++i));
+	recv_ping(ping, sockfd);
+	print_foreach(ping);
+	return (ping_receive(sockfd, ping, ++i));
 }

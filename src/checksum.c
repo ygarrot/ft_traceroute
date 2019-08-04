@@ -12,23 +12,6 @@
 
 #include "ft_traceroute.h"
 
-unsigned short	checksum(void *buf, int len)
-{
-	unsigned int	sum;
-
-	sum = 0;
-	while (len > 1)
-	{
-		sum += *(unsigned short*)buf++;
-		len -= 2;
-	}
-	if (len == 1)
-		sum += *(unsigned char*)buf;
-	sum = (sum >> 16) + (sum & 0xFFFF);
-	sum += (sum >> 16);
-	return ((unsigned short)~sum);
-}
-
 unsigned short in_cksum(unsigned short *addr, int len) 
 { 
 	register int sum = 0; 
@@ -41,13 +24,11 @@ unsigned short in_cksum(unsigned short *addr, int len)
 		sum += *w++; 
 		nleft -= 2; 
 	} 
-
 	if (nleft == 1) 
 	{ 
 		*(u_char *) (&answer) = *(u_char *) w; 
 		sum += answer; 
 	} 
-
 	sum = (sum >> 16) + (sum & 0xffff);
 	sum += (sum >> 16);
 	answer = ~sum;

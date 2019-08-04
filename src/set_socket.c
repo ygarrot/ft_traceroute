@@ -89,7 +89,6 @@ int		check_addr(t_ping *ping)
 	inet_ntop(ping->host_entity->ai_family, ptr,
 			ping->host_addr, 100);
 	ping->des = ((t_sockaddr_in*)ping->host_entity->ai_addr)->sin_addr.s_addr;
-	/* freeaddrinfo(&tmp); */
 	if (reverse_dns_lookup(ping) == ERROR_CODE)
 	{
 		ft_printf("reverse dns lookup\n");

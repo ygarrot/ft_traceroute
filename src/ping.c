@@ -45,7 +45,8 @@ int		set_data(t_ping *ping, char *buff, struct icmphdr *icmph)
 	seq = ntohs(icmph->un.echo.sequence);
 	if (ping->last_ttl == -1 && ip->ip_src.s_addr == ping->des)
 		ping->last_ttl = ttl;
-	ping->route[ttl].addr = ft_strdup(inet_ntoa(ip->ip_src)); 
+	if (!ping->route[ttl].addr) 
+		ping->route[ttl].addr = ft_strdup(inet_ntoa(ip->ip_src)); 
 	ping->route[ttl].tries[seq].tv_sec -= ping->env.time.tv_sec;
 	ping->route[ttl].tries[seq].tv_usec -= ping->env.time.tv_usec;
 	ping->route[ttl].done++;

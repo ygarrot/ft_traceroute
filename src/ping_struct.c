@@ -14,10 +14,10 @@
 
 void	free_routes(t_route *route, int ttl)
 {
-	while (--ttl)
+	while (--ttl > -1)
 	{
-		free(route[ttl].tries);
-		/* free(route[ttl].addr); */
+		ft_memdel((void**)&route[ttl].tries);
+		ft_strdel(&route[ttl].addr);
 	}
 	free(route);
 }

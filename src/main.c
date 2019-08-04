@@ -63,4 +63,5 @@ int		main(int ac, char **av)
 	ft_ping(&ping);
 	ping_receive(ping.socket, &ping, 0);
 	free_routes(ping.route, ping.env.max_ttl);
+	freeaddrinfo(ping.host_entity);
 }

@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 15:45:55 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/30 09:33:19 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/08/05 10:44:27 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 int	set_ip_struct(t_ping *ping)
 {
-	struct ip *iph = (struct ip *) ping->packet;
+	struct ip *iph;
 
+	iph = (struct ip *)ping->packet;
 	iph->ip_hl = 5;
 	iph->ip_v = 4;
 	iph->ip_tos = ping->env.tos;
@@ -33,8 +34,9 @@ int	set_ip_struct(t_ping *ping)
 
 int	set_icmp_struct(t_ping *ping)
 {
-	struct icmphdr *icmph = (struct icmphdr*)(ping->packet + sizeof(struct ip));
+	struct icmphdr *icmph;
 
+	icmph = (struct icmphdr*)(ping->packet + sizeof(struct ip));
 	icmph->type = ICMP_ECHO;
 	icmph->code = 0;
 	icmph->un.echo.id = htons(ping->env.ttl);

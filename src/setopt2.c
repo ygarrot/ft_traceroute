@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/15 17:45:19 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/07/14 14:06:36 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/08/05 10:53:20 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,23 @@
 
 void	display_help(t_ping *ping, char *value)
 {
-	const char *usage = "Usage: traceroute [OPTION...] HOST\n\
-Print the route packets trace to network host.\n\
-\n\
-  -f,     set initial hop distance, i.e., time-to-live\n\
-  -m,     set maximal hop count (default: 64)\n\
-  -p,     use destination PORT port (default: 33434)\n\
-  -q,     send NUM probe packets per hop (default: 3)\n\
-          resolve hostnames\n\
-  -t,     set type of service (TOS) to NUM\n\
-  -w,     wait NUM seconds for response (default: 3)\n\
-  -?,     give this help list\n\
-          give a short usage message\n\
-	  ";
+	char *usage;
 
 	(void)ping;
 	(void)value;
+	usage = "Usage: traceroute [OPTION...] HOST\n"
+		"Print the route packets trace to network host.\n"
+		"\n"
+		"-f,     set initial hop distance, i.e., time-to-live\n"
+		"-m,     set maximal hop count (default: 64)\n"
+		"-p,     use destination PORT port (default: 33434)\n"
+		"-q,     send NUM probe packets per hop (default: 3)\n"
+		"resolve hostnames\n"
+		"-t,     set type of service (TOS) to NUM\n"
+		"-w,     wait NUM seconds for response (default: 3)\n"
+		"-?,     give this help list\n"
+		"give a short usage message\n"
+		;
 	printf("%s\n", usage);
 }
 

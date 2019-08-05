@@ -39,13 +39,13 @@ int	print_foreach(t_ping *ping)
 	if (check_ttl(ping, current_ttl, current_try))
 		return (1);
 	if (current_try == 0)
-		printf("%3d   %s", current_ttl,
+		printf("\033[1;34m%3d   %s\033[0m", current_ttl,
 				ping->timedout ? ping->route[current_ttl].addr : "");
 	if (ping->route[current_ttl].done[current_try])
 		printf("  %.3fms",
 			timeval_to_double(ping->route[current_ttl].tries[current_try]));
 	else
-		printf(" *");
+		printf("\033[1;31m *\033[0m");
 	if (++current_try >= ping->env.max_tries)
 	{
 		ping->done = current_ttl == ping->last_ttl
@@ -54,5 +54,6 @@ int	print_foreach(t_ping *ping)
 		++ping->env.first_ttl;
 		current_try = 0;
 	}
+	fflush(0);
 	return (print_foreach(ping));
 }

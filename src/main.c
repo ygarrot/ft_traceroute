@@ -37,6 +37,7 @@ void	ft_ping(t_ping *ping)
 		printf("gettime of day error\n");
 	ping_send(ping->socket, ping);
 	ping_receive(ping->socket, ping);
+	print_foreach(ping);
 	ft_ping(ping);
 }
 
@@ -58,7 +59,6 @@ int		main(int ac, char **av)
 		ft_exit("check addr", EXIT_FAILURE);
 	print_summary(&ping);
 	ft_ping(&ping);
-	ping_receive(ping.socket, &ping);
 	free_routes(ping.route, ping.env.max_ttl);
 	freeaddrinfo(ping.host_entity);
 	close(ping.socket);

@@ -22,6 +22,7 @@ int		ping_send(int socket, t_ping *ping)
 				(struct sockaddr*)ping->sockaddr,
 				sizeof(struct sockaddr_in)) <= 0)
 	{
+		ft_exit("traceroute: sendto: Invalid argument", EXIT_FAILURE);
 		;
 	}
 	return (1);
@@ -93,6 +94,5 @@ int		ping_receive(int sockfd, t_ping *ping)
 	if (!FD_ISSET(sockfd, &rdfds))
 		return (1);
 	recv_ping(ping, sockfd);
-	print_foreach(ping);
 	return (1);
 }

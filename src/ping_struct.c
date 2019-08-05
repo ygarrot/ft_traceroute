@@ -41,7 +41,6 @@ void	set_routes(t_ping *ping, int i)
 
 void	ping_ctor(t_ping *ping)
 {
-	ft_bzero(ping, sizeof(struct s_ping));
 	ping->env.max_ttl = MAX_TTL;
 	ping->env.max_tries = MAX_TRIES;
 	ping->env.timeout = DEFAULT_TIMEOUT;

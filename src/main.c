@@ -45,6 +45,7 @@ int		main(int ac, char **av)
 {
 	t_ping	ping;
 
+	ft_bzero(&ping, sizeof(t_ping));
 	if (usage(ac, av))
 		return (1);
 	ping.opt = ft_getoptvalue(ac, av, OPT_STR, ping.opt_tab);

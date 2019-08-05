@@ -41,6 +41,7 @@ void	set_routes(t_ping *ping, int i)
 
 void	ping_ctor(t_ping *ping)
 {
+	ft_bzero(ping, sizeof(struct s_ping));
 	ping->env.max_ttl = MAX_TTL;
 	ping->env.max_tries = MAX_TRIES;
 	ping->env.timeout = DEFAULT_TIMEOUT;
@@ -49,8 +50,8 @@ void	ping_ctor(t_ping *ping)
 	ping->last_ttl = -1;
 	func_tab(ping);
 	ping->env.first_ttl = ping->env.ttl;
-	if (!(ping->route = (struct route*)ft_memalloc(
-				sizeof(struct route) * ping->env.max_ttl)))
+	if (!(ping->route = (struct s_route*)ft_memalloc(
+				sizeof(struct s_route) * ping->env.max_ttl)))
 		ft_exit("malloc failed", EXIT_FAILURE);
 	set_routes(ping, 0);
 }

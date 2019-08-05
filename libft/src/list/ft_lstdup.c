@@ -6,7 +6,7 @@
 /*   By: ygarrot <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/12 13:03:04 by ygarrot           #+#    #+#             */
-/*   Updated: 2019/05/12 16:11:37 by ygarrot          ###   ########.fr       */
+/*   Updated: 2019/08/05 11:51:05 by ygarrot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 t_list	*ft_lstdup(const t_list *ls)
 {
-	return ft_lstnew(lst->content, 
+	return (ft_lstnew(lst->content, lst->content_size));
 }
